@@ -1,4 +1,4 @@
-import { Address, BigInt, BigDecimal } from '@graphprotocol/graph-ts'
+import { Address, BigInt, BigDecimal, Bytes } from '@graphprotocol/graph-ts'
 import { LOG_NEW_POOL } from '../types/Factory/Factory'
 import { Balancer, Pool, CrpControllerPoolCount} from '../types/schema'
 import { Pool as PoolContract, CrpController as CrpControllerContract, CrpController } from '../types/templates'
@@ -29,8 +29,14 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
     factory.totalSwapVolume = ZERO_BD
     factory.totalSwapFee = ZERO_BD
   }
+  let poolId = event.params.pool.toHexString()
 
-  let pool = new Pool(event.params.pool.toHexString())
+  // skip misconfigured pool on mainnet
+  if (poolId == '0x8c4167154accd56797d122d8bcaad3a9432ed4af'){
+    return
+  }
+
+  let pool = new Pool(poolId)
   pool.crp = isCrp(event.params.caller)
   pool.rights = []
   if (pool.crp) {
@@ -65,6 +71,7 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
   pool.swapsCount = BigInt.fromI32(0)
   pool.factoryID = event.address.toHexString()
   pool.tokensList = []
+  pool.holders = []
   pool.tx = event.transaction.hash
   pool.save()
 
