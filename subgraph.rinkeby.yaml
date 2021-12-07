@@ -32,9 +32,9 @@ dataSources:
     name: XTokenWrapper
     network: rinkeby
     source:
-      address: "0xa3F80483e696b0dec27796e0EF31d9Bf26FB6253"
+      address: "0x5c2BDE960cdF557B882Ba293F5e036E1A1316aa0"
       abi: XTokenWrapper
-      startBlock: 8659068
+      startBlock: 9750962
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
