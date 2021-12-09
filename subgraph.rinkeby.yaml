@@ -10,7 +10,7 @@ dataSources:
     source:
       address: "0xc7D87c0B11288de9fD627e9383f63C953e2FdD72"
       abi: Factory
-      startBlock: 8659061
+      startBlock: 9780125
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -34,7 +34,7 @@ dataSources:
     source:
       address: "0x5c2BDE960cdF557B882Ba293F5e036E1A1316aa0"
       abi: XTokenWrapper
-      startBlock: 9750962
+      startBlock: 9780125
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
