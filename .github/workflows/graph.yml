@@ -22,7 +22,7 @@ jobs:
 #      - name: Deploy
 #        env:
 #          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-#          GITHUB_USERNAME: ${{github.actor}}
+#          GITHUB_USERNAME: ${{github.repository_owner}}
 #          SUBGRAPH_NAME: "trade-mainnet"
 #          GRAPH_CONFIG_FILE: "subgraph.yaml"
 #        run: yarn deploy
@@ -44,7 +44,7 @@ jobs:
       - name: Deploy
         env:
           ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-          GITHUB_USERNAME: ${{github.actor}}
+          GITHUB_USERNAME: ${{github.repository_owner}}
           SUBGRAPH_NAME: "trade-rinkeby"
           GRAPH_CONFIG_FILE: "subgraph.rinkeby.yaml"
         run: yarn deploy
@@ -66,7 +66,7 @@ jobs:
 #      - name: Deploy
 #        env:
 #          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-#          GITHUB_USERNAME: ${{github.actor}}
+#          GITHUB_USERNAME: ${{github.repository_owner}}
 #          SUBGRAPH_NAME: "trade-polygon"
 #          GRAPH_CONFIG_FILE: "subgraph.matic.yaml"
 #        run: yarn deploy
@@ -88,7 +88,7 @@ jobs:
 #      - name: Deploy
 #        env:
 #          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-#          GITHUB_USERNAME: ${{github.actor}}
+#          GITHUB_USERNAME: ${{github.repository_owner}}
 #          SUBGRAPH_NAME: "trade-mumbai"
 #          GRAPH_CONFIG_FILE: "subgraph.mumbai.yaml"
 #        run: yarn deploy
