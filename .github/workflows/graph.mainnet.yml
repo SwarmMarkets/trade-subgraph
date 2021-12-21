@@ -2,23 +2,26 @@ name: Deploy The Graph on Ethereum Mainnet
 
 on:
   workflow_call:
+    secrets:
+      GRAPH_ACCESS_TOKEN:
+        required: true
     inputs:
-      subgraph_name:
-        default: "trade-mainnet"
+      SUBGRAPH_NAME:
+        default: trade-mainnet
         type: string
         required: true
         description: Specify a subgraph name
 
   workflow_dispatch:
     inputs:
-      subgraph_name:
+      SUBGRAPH_NAME:
         type: choice
         description: Are you going to deploy a stable or beta version?
         required: true
-        default: "trade-mainnet"
+        default: trade-mainnet
         options:
-          - "trade-mainnet"
-          - "trade-mainnet-beta"
+          - trade-mainnet
+          - trade-mainnet-beta
 
 jobs:
   deploy-mainnet:
@@ -39,6 +42,6 @@ jobs:
         env:
           ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
-          SUBGRAPH_NAME: ${{ github.event.inputs.subgraph_name }}
+          SUBGRAPH_NAME: ${{ inputs.SUBGRAPH_NAME }}${{ github.event.inputs.SUBGRAPH_NAME }}
           GRAPH_CONFIG_FILE: "subgraph.yaml"
         run: yarn deploy
