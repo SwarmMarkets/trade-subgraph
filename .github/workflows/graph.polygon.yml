@@ -1,0 +1,47 @@
+name: Deploy The Graph on Polygon Mainnet
+
+on:
+  workflow_call:
+    secrets:
+      THE_GRAPH_ACCESS_TOKEN:
+        required: true
+    inputs:
+      SUBGRAPH_NAME:
+        default: trade-polygon
+        type: string
+        required: false
+        description: Specify a subgraph name
+
+  workflow_dispatch:
+    inputs:
+      SUBGRAPH_NAME:
+        type: choice
+        description: Are you going to deploy a stable or beta version?
+        required: true
+        default: trade-polygon
+        options:
+          - trade-polygon
+          - trade-polygon-beta
+
+jobs:
+  deploy-polygon:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.22.8
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Codegen
+        run: yarn codegen
+      - name: Build
+        run: yarn build
+      - name: Deploy
+        env:
+          ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
+          GITHUB_USERNAME: ${{ github.repository_owner }}
+          SUBGRAPH_NAME: ${{ inputs.SUBGRAPH_NAME }}${{ github.event.inputs.SUBGRAPH_NAME }}
+          GRAPH_CONFIG_FILE: "subgraph.polygon.yaml"
+        run: yarn deploy
