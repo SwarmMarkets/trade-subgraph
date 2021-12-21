@@ -5,27 +5,27 @@ on:
     branches: [ main ]
 
 jobs:
-  #  deploy-mainnet:
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - uses: actions/checkout@v2
-  #      - name: Install node
-  #        uses: actions/setup-node@v1
-  #        with:
-  #          node-version: 12.22.8
-  #      - name: Install dependencies
-  #        run: yarn --frozen-lockfile
-  #      - name: Codegen
-  #        run: yarn codegen
-  #      - name: Build
-  #        run: yarn build
-  #      - name: Deploy
-  #        env:
-  #          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-  #          GITHUB_USERNAME: ${{github.repository_owner}}
-  #          SUBGRAPH_NAME: "trade-mainnet"
-  #          GRAPH_CONFIG_FILE: "subgraph.yaml"
-  #        run: yarn deploy
+  deploy-mainnet:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.22.8
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Codegen
+        run: yarn codegen
+      - name: Build
+        run: yarn build
+      - name: Deploy
+        env:
+          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
+          GITHUB_USERNAME: ${{github.repository_owner}}
+          SUBGRAPH_NAME: "trade-mainnet"
+          GRAPH_CONFIG_FILE: "subgraph.yaml"
+        run: yarn deploy
 
   deploy-rinkeby:
     runs-on: ubuntu-latest
@@ -49,46 +49,46 @@ jobs:
           GRAPH_CONFIG_FILE: "subgraph.rinkeby.yaml"
         run: yarn deploy
 
-#  deploy-matic:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Install node
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: 12.22.8
-#      - name: Install dependencies
-#        run: yarn --frozen-lockfile
-#      - name: Codegen
-#        run: yarn codegen
-#      - name: Build
-#        run: yarn build
-#      - name: Deploy
-#        env:
-#          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-#          GITHUB_USERNAME: ${{github.repository_owner}}
-#          SUBGRAPH_NAME: "trade-polygon"
-#          GRAPH_CONFIG_FILE: "subgraph.matic.yaml"
-#        run: yarn deploy
-#
-#  deploy-mumbai:
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Install node
-#        uses: actions/setup-node@v1
-#        with:
-#          node-version: 12.22.8
-#      - name: Install dependencies
-#        run: yarn --frozen-lockfile
-#      - name: Codegen
-#        run: yarn codegen
-#      - name: Build
-#        run: yarn build
-#      - name: Deploy
-#        env:
-#          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-#          GITHUB_USERNAME: ${{github.repository_owner}}
-#          SUBGRAPH_NAME: "trade-mumbai"
-#          GRAPH_CONFIG_FILE: "subgraph.mumbai.yaml"
-#        run: yarn deploy
+  #  deploy-matic:
+  #    runs-on: ubuntu-latest
+  #    steps:
+  #      - uses: actions/checkout@v2
+  #      - name: Install node
+  #        uses: actions/setup-node@v1
+  #        with:
+  #          node-version: 12.22.8
+  #      - name: Install dependencies
+  #        run: yarn --frozen-lockfile
+  #      - name: Codegen
+  #        run: yarn codegen
+  #      - name: Build
+  #        run: yarn build
+  #      - name: Deploy
+  #        env:
+  #          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
+  #          GITHUB_USERNAME: ${{github.repository_owner}}
+  #          SUBGRAPH_NAME: "trade-polygon"
+  #          GRAPH_CONFIG_FILE: "subgraph.matic.yaml"
+  #        run: yarn deploy
+
+  deploy-mumbai:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install node
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12.22.8
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+      - name: Codegen
+        run: yarn codegen
+      - name: Build
+        run: yarn build
+      - name: Deploy
+        env:
+          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
+          GITHUB_USERNAME: ${{github.repository_owner}}
+          SUBGRAPH_NAME: "trade-mumbai"
+          GRAPH_CONFIG_FILE: "subgraph.mumbai.yaml"
+        run: yarn deploy

@@ -26,6 +26,7 @@ jobs:
           SUBGRAPH_NAME: "trade-mainnet-beta"
           GRAPH_CONFIG_FILE: "subgraph.yaml"
         run: yarn deploy
+
   deploy-rinkeby:
     runs-on: ubuntu-latest
     steps:
@@ -47,6 +48,7 @@ jobs:
           SUBGRAPH_NAME: "trade-rinkeby-beta"
           GRAPH_CONFIG_FILE: "subgraph.rinkeby.yaml"
         run: yarn deploy
+
   #  deploy-matic:
   #    runs-on: ubuntu-latest
   #    steps:
@@ -68,6 +70,7 @@ jobs:
   #          SUBGRAPH_NAME: "trade-polygon-beta"
   #          GRAPH_CONFIG_FILE: "subgraph.matic.yaml"
   #        run: yarn deploy
+
   deploy-mumbai:
     runs-on: ubuntu-latest
     steps:
