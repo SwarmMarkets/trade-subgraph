@@ -1,91 +1,34 @@
-name: Deploy Beta Graph
+name: Deploy Beta Graphs
 
 on:
   push:
     branches: [ develop ]
 
 jobs:
-  deploy-mainnet:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.22.8
-      - name: Install dependencies
-        run: yarn --frozen-lockfile
-      - name: Codegen
-        run: yarn codegen
-      - name: Build
-        run: yarn build
-      - name: Deploy
-        env:
-          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-          GITHUB_USERNAME: ${{github.repository_owner}}
-          SUBGRAPH_NAME: "trade-mainnet-beta"
-          GRAPH_CONFIG_FILE: "subgraph.yaml"
-        run: yarn deploy
-  deploy-rinkeby:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.22.8
-      - name: Install dependencies
-        run: yarn --frozen-lockfile
-      - name: Codegen
-        run: yarn codegen
-      - name: Build
-        run: yarn build
-      - name: Deploy
-        env:
-          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-          GITHUB_USERNAME: ${{github.repository_owner}}
-          SUBGRAPH_NAME: "trade-rinkeby-beta"
-          GRAPH_CONFIG_FILE: "subgraph.rinkeby.yaml"
-        run: yarn deploy
-  #  deploy-matic:
-  #    runs-on: ubuntu-latest
-  #    steps:
-  #      - uses: actions/checkout@v2
-  #      - name: Install node
-  #        uses: actions/setup-node@v1
-  #        with:
-  #          node-version: 12.22.8
-  #      - name: Install dependencies
-  #        run: yarn --frozen-lockfile
-  #      - name: Codegen
-  #        run: yarn codegen
-  #      - name: Build
-  #        run: yarn build
-  #      - name: Deploy
-  #        env:
-  #          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-  #          GITHUB_USERNAME: ${{github.repository_owner}}
-  #          SUBGRAPH_NAME: "trade-polygon-beta"
-  #          GRAPH_CONFIG_FILE: "subgraph.matic.yaml"
-  #        run: yarn deploy
-  deploy-mumbai:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Install node
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.22.8
-      - name: Install dependencies
-        run: yarn --frozen-lockfile
-      - name: Codegen
-        run: yarn codegen
-      - name: Build
-        run: yarn build
-      - name: Deploy
-        env:
-          ACCESS_TOKEN: ${{secrets.THE_GRAPH_ACCESS_TOKEN}}
-          GITHUB_USERNAME: ${{github.repository_owner}}
-          SUBGRAPH_NAME: "trade-mumbai-beta"
-          GRAPH_CONFIG_FILE: "subgraph.mumbai.yaml"
-        run: yarn deploy
+  deploy-beta-mainnet:
+    uses: swarmmarkets/trade-subgraph/.github/workflows/graph.mainnet.yml@develop
+    with:
+      SUBGRAPH_NAME: trade-mainnet-beta
+    secrets:
+      GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
+
+  deploy-beta-rinkeby:
+    uses: swarmmarkets/trade-subgraph/.github/workflows/graph.rinkeby.yml@develop
+    with:
+      SUBGRAPH_NAME: trade-rinkeby-beta
+    secrets:
+      GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
+
+#  deploy-beta-polygon:
+#    uses: swarmmarkets/trade-subgraph/.github/workflows/graph.polygon.yml@develop
+#    with:
+#      SUBGRAPH_NAME: trade-polygon-beta
+#    secrets:
+#      GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
+
+  deploy-beta-mumbai:
+    uses: swarmmarkets/trade-subgraph/.github/workflows/graph.mumbai.yml@develop
+    with:
+      SUBGRAPH_NAME: trade-mumbai-beta
+    secrets:
+      GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
