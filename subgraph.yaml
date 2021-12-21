@@ -1,6 +1,6 @@
 specVersion: 0.0.2
 description: Swarm Network provides open technology to enable the creation and management of digital assets.
-repository: https://github.com/Altoros/swarm-markets-subgraph
+repository: https://github.com/SwarmMarkets/trade-subgraph
 schema:
   file: ./schema.graphql
 dataSources:
