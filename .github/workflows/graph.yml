@@ -6,29 +6,21 @@ on:
 
 jobs:
   deploy-stable-mainnet:
-    uses: swarmmarkets/trade-subgraph/.github/workflows/graph.mainnet.yml@master
-    with:
-      SUBGRAPH_NAME: trade-mainnet
+    uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.mainnet.yml@master
     secrets:
-      GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
+      THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
   deploy-stable-rinkeby:
-    uses: swarmmarkets/trade-subgraph/.github/workflows/graph.rinkeby.yml@master
-    with:
-      SUBGRAPH_NAME: trade-rinkeby
+    uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.rinkeby.yml@master
     secrets:
-      GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
+      THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
 #  deploy-stable-polygon:
-#    uses: swarmmarkets/trade-subgraph/.github/workflows/graph.polygon.yml@master
-#    with:
-#      SUBGRAPH_NAME: trade-polygon
+#    uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.polygon.yml@master
 #    secrets:
-#      GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
+#      THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
   deploy-stable-mumbai:
-    uses: swarmmarkets/trade-subgraph/.github/workflows/graph.mumbai.yml@master
-    with:
-      SUBGRAPH_NAME: trade-mumbai
+    uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.mumbai.yml@master
     secrets:
-      GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
+      THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}

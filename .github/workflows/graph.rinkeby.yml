@@ -9,7 +9,7 @@ on:
       SUBGRAPH_NAME:
         default: trade-rinkeby
         type: string
-        required: true
+        required: false
         description: Specify a subgraph name
 
   workflow_dispatch:
