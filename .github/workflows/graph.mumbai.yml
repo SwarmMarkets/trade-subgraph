@@ -1,4 +1,4 @@
-name: Deploy The Graph on Mumbai
+name: Deploy Graph on Mumbai
 
 on:
   workflow_call:

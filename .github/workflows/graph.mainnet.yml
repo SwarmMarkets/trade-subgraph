@@ -1,4 +1,4 @@
-name: Deploy The Graph on Ethereum Mainnet
+name: Deploy Graph on Ethereum Mainnet
 
 on:
   workflow_call:
