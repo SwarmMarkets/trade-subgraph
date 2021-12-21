@@ -1,4 +1,4 @@
-name: Deploy The Graph on Polygon Mainnet
+name: Deploy Graph on Polygon Mainnet
 
 on:
   workflow_call:

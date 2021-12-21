@@ -1,4 +1,4 @@
-name: Deploy The Graph on Rinkeby
+name: Deploy Graph on Rinkeby
 
 on:
   workflow_call:
