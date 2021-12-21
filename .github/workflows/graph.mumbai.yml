@@ -3,7 +3,7 @@ name: Deploy The Graph on Mumbai
 on:
   workflow_call:
     secrets:
-      GRAPH_ACCESS_TOKEN:
+      THE_GRAPH_ACCESS_TOKEN:
         required: true
     inputs:
       SUBGRAPH_NAME:
