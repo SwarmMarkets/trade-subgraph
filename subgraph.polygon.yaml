@@ -1,0 +1,144 @@
+specVersion: 0.0.2
+description: Swarm Network provides open technology to enable the creation and management of digital assets.
+repository: https://github.com/SwarmMarkets/trade-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Factory
+    network: matic
+    source:
+      address: ""
+      abi: Factory
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/factory.ts
+      entities:
+        - Balancer
+      abis:
+        - name: Factory
+          file: ./abis/BFactory.json
+        - name: CRPFactory
+          file: ./abis/CRPFactory.json
+        - name: ConfigurableRightsPool
+          file: ./abis/ConfigurableRightsPool.json
+      eventHandlers:
+        - event: LOG_NEW_POOL(indexed address,indexed address)
+          handler: handleNewPool
+  - kind: ethereum/contract
+    name: XTokenWrapper
+    network: matic
+    source:
+      address: ""
+      abi: XTokenWrapper
+      startBlock: 0
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/xtokenwrapper.ts
+      entities:
+        - Token
+      abis:
+        - name: XTokenWrapper
+          file: ./abis/XTokenWrapper.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: RegisterToken(indexed address,indexed address)
+          handler: handleRegisterToken
+templates:
+  - kind: ethereum/contract
+    name: Pool
+    network: matic
+    source:
+      abi: Pool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/pool.ts
+      entities:
+        - Pool
+        - Balancer
+        - Swap
+      abis:
+        - name: Pool
+          file: ./abis/BPool.json
+        - name: BToken
+          file: ./abis/BToken.json
+        - name: BTokenBytes
+          file: ./abis/BTokenBytes32.json
+      eventHandlers:
+        - event: LOG_CALL(indexed bytes4,indexed address,bytes)
+          topic0: "0x34e1990700000000000000000000000000000000000000000000000000000000"
+          handler: handleSetSwapFee
+        - event: LOG_CALL(indexed bytes4,indexed address,bytes)
+          topic0: "0x92eefe9b00000000000000000000000000000000000000000000000000000000"
+          handler: handleSetController
+        - event: LOG_CALL(indexed bytes4,indexed address,bytes)
+          topic0: "0x49b5955200000000000000000000000000000000000000000000000000000000"
+          handler: handleSetPublicSwap
+        - event: LOG_CALL(indexed bytes4,indexed address,bytes)
+          topic0: "0x4bb278f300000000000000000000000000000000000000000000000000000000"
+          handler: handleFinalize
+        - event: LOG_CALL(indexed bytes4,indexed address,bytes)
+          topic0: "0x3fdddaa200000000000000000000000000000000000000000000000000000000"
+          handler: handleRebind
+        - event: LOG_CALL(indexed bytes4,indexed address,bytes)
+          topic0: "0xe4e1e53800000000000000000000000000000000000000000000000000000000"
+          handler: handleRebind
+        - event: LOG_CALL(indexed bytes4,indexed address,bytes)
+          topic0: "0xcf5e7bd300000000000000000000000000000000000000000000000000000000"
+          handler: handleUnbind
+        - event: LOG_JOIN(indexed address,indexed address,uint256)
+          handler: handleJoinPool
+        - event: LOG_EXIT(indexed address,indexed address,uint256)
+          handler: handleExitPool
+        - event: LOG_SWAP(indexed address,indexed address,indexed address,uint256,uint256)
+          handler: handleSwap
+  - kind: ethereum/contract
+    name: CrpController
+    network: matic
+    source:
+      abi: ConfigurableRightsPool
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/pool.ts
+      entities:
+        - Pool
+      abis:
+        - name: ConfigurableRightsPool
+          file: ./abis/ConfigurableRightsPool.json
+      eventHandlers:
+        - event: OwnershipTransferred(indexed address,indexed address)
+          handler: handleSetCrpController
+  - kind: ethereum/contract
+    name: XToken
+    network: matic
+    source:
+      abi: XToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/xtoken.ts
+      entities:
+        - XToken
+      abis:
+        - name: XToken
+          file: ./abis/XToken.json
+        - name: GnosisSafe
+          file: ./abis/GnosisSafe.json
+      eventHandlers:
+        - event: Paused(address)
+          handler: handlePaused
+        - event: Unpaused(address)
+          handler: handleUnpaused
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
