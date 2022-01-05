@@ -8,7 +8,7 @@ dataSources:
     name: Factory
     network: matic
     source:
-      address: ""
+      address: "0x991Fd11876A438af7BcaDc98f4b3CF201bdf6191"
       abi: Factory
       startBlock: 0
     mapping:
@@ -32,7 +32,7 @@ dataSources:
     name: XTokenWrapper
     network: matic
     source:
-      address: ""
+      address: "0x6cDDe4eD9165405c1914b229d3cD4Ac9C354C331"
       abi: XTokenWrapper
       startBlock: 0
     mapping:
