@@ -88,7 +88,9 @@ type Swap @entity {
   tokenInSym: String! #
   tokenOut: Bytes! #
   tokenOutSym: String! #
-  tokenAmountIn: BigDecimal! #
+  tokenAmountIn: BigDecimal!
+  tokenAmountOut: BigDecimal!
+  offerType: BigDecimal! #
   tokenAmountOut: BigDecimal! #
   poolAddress: Pool
   userAddress: User # User address that initiates the swap
@@ -149,4 +151,30 @@ type XToken @entity {
   decimals: Int!
   paused: Boolean!
   poolTokens: [PoolToken!] @derivedFrom(field: "xToken")
+}
+
+enum OfferType {
+  PARTIAL
+  FULL
+}
+
+type Offer @entity {
+  id: ID!
+  maker: Bytes! # address of maker
+  tokenIn: Bytes!
+  tokenOut: Bytes!
+  tokenAmountIn: BigInt!
+  tokenAmountOut: BigInt!
+  offerType: OfferType!
+  specialAddress: Bytes!
+  isCompleted: Boolean!
+  orders: [Order!]! @derivedFrom(field: "offer")
+}
+
+type Order @entity {
+  id: ID!
+  offer: Offer!
+  amountPaid: BigInt!
+  orderedBy: Bytes!
+  amountToReceive: BigInt!
 }
