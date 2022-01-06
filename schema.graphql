@@ -157,7 +157,7 @@ type Offer @entity {
   tokenIn: Bytes!
   tokenOut: Bytes!
   amountIn: BigInt!
-  AmountOut: BigInt!
+  amountOut: BigInt!
   offerType: BigInt!
   specialAddress: Bytes!
   isCompleted: Boolean!
