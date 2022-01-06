@@ -1,4 +1,4 @@
-import { CreatedOffer, CreatedOrder } from './../types/dOTC/dOTCManager';
+import { CreatedOffer, CreatedOrder } from '../types/dOTC/DOTCManager';
 import { Offer, Order } from '../types/schema';
 import { BigInt } from '@graphprotocol/graph-ts';
 
