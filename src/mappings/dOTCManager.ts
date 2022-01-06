@@ -10,8 +10,8 @@ export function handleNewOffer (event: CreatedOffer):void {
     offer.maker = event.params.maker;
     offer.tokenIn = event.params.tokenIn
     offer.tokenOut = event.params.tokenOut
-    offer.AmountIn = event.params.amountIn
-    offer.AmountOut = event.params.amountOut
+    offer.amountIn = event.params.amountIn
+    offer.amountOut = event.params.amountOut
     offer.offerType = BigInt.fromI32(event.params.offerType)
     offer.specialAddress = event.params.specialAddress
     offer.isCompleted = event.params.isComplete
