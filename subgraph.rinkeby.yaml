@@ -54,9 +54,9 @@ dataSources:
     name: dOTC
     network: rinkeby
     source:
-      address: "0x45E52Ad8fe37081094006906C7d0A6D2960A60fD"
+      address: "0xEc8f971a15d530a0966e49bDeC3470d8D3030eA0"
       abi: DOTCManager
-      startBlock: 9905001
+      startBlock: 9938498
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
