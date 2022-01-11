@@ -154,10 +154,11 @@ type XToken @entity {
 type Offer @entity {
   id: ID!
   maker: Bytes! # address of maker
-  tokenIn: Bytes!
-  tokenOut: Bytes!
-  AmountIn: BigInt!
-  AmountOut: BigInt!
+  tokenIn: Token!
+  tokenOut: Token!
+  amountIn: BigDecimal!
+  amountOut: BigDecimal!
+  price: BigDecimal!
   offerType: BigInt!
   specialAddress: Bytes!
   isCompleted: Boolean!
@@ -168,7 +169,7 @@ type Offer @entity {
 type Order @entity {
   id: ID!
   offers: Offer!
-  amountPaid: BigInt!
+  amountPaid: BigDecimal!
   orderedBy: Bytes!
-  amountToReceive: BigInt!
+  amountToReceive: BigDecimal!
 }

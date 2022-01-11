@@ -1,6 +1,7 @@
 import { CreatedOffer, CreatedOrder, CompletedOffer, CancledOffer } from './../types/dOTC/DOTCManager';
-import { Offer, Order } from '../types/schema';
 import { BigInt } from '@graphprotocol/graph-ts';
+import { Offer, Order, Token } from '../types/schema';
+import { bigIntToDecimal } from './helpers';
 
 export function handleNewOffer (event: CreatedOffer):void {
     let offer = Offer.load(event.params.offerId.toHex());
