@@ -61,7 +61,7 @@ dataSources:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
-      file: ./src/mappings/dOTCmanager.ts
+      file: ./src/mappings/dOTCManager.ts
       entities:
         - Offers
         - Orders
@@ -73,6 +73,10 @@ dataSources:
           handler: handleNewOffer
         - event: CreatedOrder(uint256,uint256,uint256,address,uint256)
           handler: handleNewOrder
+        - event: CompletedOffer(uint256)
+          handler: handleOfferCompleted
+        - event: CancledOffer(uint256, address, uint256)
+          handler: handleCanceledOffer
 templates:
   - kind: ethereum/contract
     name: Pool

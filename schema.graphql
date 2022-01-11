@@ -162,6 +162,7 @@ type Offer @entity {
   specialAddress: Bytes!
   isCompleted: Boolean!
   orders: [Order!]! @derivedFrom(field: "offers")
+  cancelled: Boolean!
 }
 
 type Order @entity {

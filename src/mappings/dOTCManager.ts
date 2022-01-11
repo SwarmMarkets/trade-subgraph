@@ -1,4 +1,4 @@
-import { CreatedOffer, CreatedOrder } from './../types/dOTC/DOTCManager';
+import { CreatedOffer, CreatedOrder, CompletedOffer, CancledOffer } from './../types/dOTC/DOTCManager';
 import { Offer, Order } from '../types/schema';
 import { BigInt } from '@graphprotocol/graph-ts';
 
@@ -15,6 +15,7 @@ export function handleNewOffer (event: CreatedOffer):void {
     offer.offerType = BigInt.fromI32(event.params.offerType)
     offer.specialAddress = event.params.specialAddress
     offer.isCompleted = event.params.isComplete
+    offer.cancelled = false
     offer.save();
 }
 
@@ -29,4 +30,20 @@ export function handleNewOrder(event: CreatedOrder):void{
     order.orderedBy = event.params.orderedBy;
     order.offers = offer.id; 
     order.save();
+}
+
+export function handleOfferCompleted(event: CompletedOffer): void{
+    let offer = Offer.load(event.params.offerId.toHex());
+    if (offer != null) {
+        offer.isCompleted = true;
+        offer.save();
+    }
+}
+
+export function handleCanceledOffer(event: CancledOffer): void{
+    let offer = Offer.load(event.params.offerId.toHex());
+    if (offer != null) {
+        offer.cancelled = true;
+        offer.save();
+    }
 }
