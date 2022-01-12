@@ -56,7 +56,7 @@ dataSources:
     source:
       address: "0x01491B1589C7138F95ecc6E930d2c8c0fAC221Cf"
       abi: DOTCManager
-      startBlock: 9938498
+      startBlock: 9948936
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
