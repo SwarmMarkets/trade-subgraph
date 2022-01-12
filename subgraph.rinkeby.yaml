@@ -54,7 +54,7 @@ dataSources:
     name: dOTC
     network: rinkeby
     source:
-      address: "0xEc8f971a15d530a0966e49bDeC3470d8D3030eA0"
+      address: "0x01491B1589C7138F95ecc6E930d2c8c0fAC221Cf"
       abi: DOTCManager
       startBlock: 9938498
     mapping:
