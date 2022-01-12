@@ -2,7 +2,6 @@
   "name": "trade-subgraph",
   "version": "0.1.0",
   "scripts": {
-    "clean": "rm -rf ./build src/types",
     "codegen": "graph codegen --output-dir src/types/ $GRAPH_CONFIG_FILE",
     "build": "graph build $GRAPH_CONFIG_FILE",
     "deploy": "graph deploy --access-token $ACCESS_TOKEN $GITHUB_USERNAME/$SUBGRAPH_NAME $GRAPH_CONFIG_FILE --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
@@ -10,12 +9,19 @@
     "build:with:env": "env-cmd yarn codegen",
     "deploy:with:env": "env-cmd yarn deploy",
     "deploy:local": "graph deploy swarmmarkets/trade-mainnet subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
-    "create:local": "graph create swarmmarkets/trade-mainnet --node http://127.0.0.1:8020"
+    "create:local": "env-cmd -x graph create \\$GITHUB_USERNAME/\\$SUBGRAPH_NAME --node http://127.0.0.1:8020",
+    "lint": "eslint --max-warnings 0 . --ext .ts"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.20.0",
     "@graphprotocol/graph-ts": "^0.20.1",
-    "env-cmd": "^10.1.0"
+    "@typescript-eslint/eslint-plugin": "^5.9.1",
+    "@typescript-eslint/parser": "^5.9.1",
+    "env-cmd": "^10.1.0",
+    "eslint": "7.31.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "prettier": "^2.5.1",
+    "typescript": "^4.5.4"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",
