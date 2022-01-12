@@ -37,7 +37,7 @@ jobs:
           cache: 'yarn'
 
       - name: Install deps (with cache)
-        uses: bahmutov/npm-install@v1.6
+        uses: bahmutov/npm-install@v1.6.0
         with:
           install-command: yarn --frozen-lockfile --silent
 
