@@ -1,7 +1,5 @@
-import { CreatedOffer, CreatedOrder, CompletedOffer, CancledOffer } from './../types/dOTC/DOTCManager';
-import { Offer, Order } from '../types/schema';
+import { CreatedOffer, CreatedOrder, CompletedOffer, CanceledOffer } from './../types/dOTC/DOTCManager';
 import { BigInt } from '@graphprotocol/graph-ts';
-import { CreatedOffer, CreatedOrder } from '../types/dOTC/DOTCManager';
 import { Offer, Order, Token } from '../types/schema';
 import { bigIntToDecimal } from './helpers';
 
@@ -48,7 +46,7 @@ export function handleOfferCompleted(event: CompletedOffer): void{
     }
 }
 
-export function handleCanceledOffer(event: CancledOffer): void{
+export function handleCanceledOffer(event: CanceledOffer): void{
     let offer = Offer.load(event.params.offerId.toHex());
     if (offer != null) {
         offer.cancelled = true;

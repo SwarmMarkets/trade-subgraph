@@ -75,7 +75,7 @@ dataSources:
           handler: handleNewOrder
         - event: CompletedOffer(uint256)
           handler: handleOfferCompleted
-        - event: CancledOffer(uint256,address,uint256)
+        - event: CanceledOffer(uint256,address,uint256)
           handler: handleCanceledOffer
 templates:
   - kind: ethereum/contract
