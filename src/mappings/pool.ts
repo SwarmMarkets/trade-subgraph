@@ -76,7 +76,17 @@ export function handleFinalize(event: LOG_CALL): void {
   let pool = Pool.load(poolId)
   // let balance = BigDecimal.fromString('100')
   pool.finalized = true
-  pool.symbol = 'BPT'
+  pool.symbol = 'SPT'
+  pool.name = 'SM Pool: '
+
+  let tokensList = pool.tokensList || []
+  for (let i: i32 = 0; i < tokensList.length; i++) {
+    let xToken = XToken.safeLoad(tokensList[i].toHexString())
+    let tokenSymbol = Token.safeLoad(xToken.token).symbol
+    let symbolPrefix = i == 0 ? '' : '-'
+    pool.name = pool.name.concat(symbolPrefix).concat(tokenSymbol)
+  }
+
   pool.publicSwap = true
   // pool.totalShares = balance
   pool.save()
