@@ -1,55 +1,66 @@
-import {  XToken } from '../types/schema'
-import { Paused, Unpaused, Transfer, XToken as XTokenAbi } from '../types/templates/XToken/XToken'
-import { Address, log, store, BigInt, Bytes } from '@graphprotocol/graph-ts'
-import { ZERO_BD, tokenToDecimal, createPoolShareEntity } from './helpers'
+import { Address, BigInt, Bytes, log, store } from '@graphprotocol/graph-ts'
+import { Pool, PoolShare } from '../types/schema'
+import { XToken } from '../wrappers'
 import {
-  Pool,
-  PoolShare,
-} from '../types/schema'
+  Paused,
+  Transfer,
+  Unpaused,
+  XToken as XTokenAbi,
+} from '../types/templates/XToken/XToken'
+import { createPoolShareEntity, tokenToDecimal, ZERO_BD } from './helpers'
 
 const DEFAULT_DECIMALS = 18
 
 export function handlePaused(event: Paused): void {
-    changeXTokenState(event.address, true)
+  changeXTokenState(event.address, true)
 }
 
 export function handleUnpaused(event: Unpaused): void {
-    changeXTokenState(event.address, false)
+  changeXTokenState(event.address, false)
 }
 
-function changeXTokenState(xTokenAddress: Address, xTokenState: boolean): void{
-    let xTokenId = xTokenAddress.toHexString()
-    let xToken = XToken.load(xTokenId)
+function changeXTokenState(xTokenAddress: Address, xTokenState: boolean): void {
+  let xTokenId = xTokenAddress.toHexString()
+  let xToken = XToken.safeLoad(xTokenId)
 
-    xToken.paused = xTokenState
-    xToken.save()
+  xToken.paused = xTokenState
+  xToken.save()
 }
 
 export function handleTransfer(event: Transfer): void {
   let xTokenAddress = event.address.toHex()
-  let xToken = XToken.load(xTokenAddress)
+  let xToken = XToken.safeLoad(xTokenAddress)
   let poolId = xToken.token
-  log.debug('handleTransfer called for xtoken {} and token {}',[xTokenAddress, poolId])
+  log.debug('handleTransfer called for xtoken {} and token {}', [
+    xTokenAddress,
+    poolId,
+  ])
   let pool = Pool.load(poolId)
   let value = event.params.value.toBigDecimal()
 
-  if(pool == null){
-      log.debug('transfer on xtoken {}, token {} not handled because it doesnt correspond to a pool',[xTokenAddress, poolId])
-      return
+  if (pool == null) {
+    log.debug(
+      'transfer on xtoken {}, token {} not handled because it doesnt correspond to a pool',
+      [xTokenAddress, poolId],
+    )
+    return
   }
 
   let ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
 
   let isMint = event.params.from.toHex() == ZERO_ADDRESS
   let isBurn = event.params.to.toHex() == ZERO_ADDRESS
-  if(isMint || isBurn) {
-    log.debug('Transfer event from {} to {} from tx {} is a mint or burn',[
+  if (isMint || isBurn) {
+    log.debug('Transfer event from {} to {} from tx {} is a mint or burn', [
       event.params.from.toHex(),
       event.params.to.toHex(),
       event.transaction.hash.toHexString(),
     ])
     let xTokenContract = XTokenAbi.bind(Address.fromString(xTokenAddress))
-    pool.totalShares = tokenToDecimal(xTokenContract.totalSupply().toBigDecimal(), 18)
+    pool.totalShares = tokenToDecimal(
+      xTokenContract.totalSupply().toBigDecimal(),
+      DEFAULT_DECIMALS,
+    )
   }
 
   let poolShareFromId = poolId.concat('-').concat(event.params.from.toHex())
@@ -58,16 +69,20 @@ export function handleTransfer(event: Transfer): void {
   let poolShareToId = poolId.concat('-').concat(event.params.to.toHex())
   let poolShareTo = PoolShare.load(poolShareToId)
 
-
-  if(!isMint){
+  if (!isMint) {
     if (poolShareFrom == null) {
-      log.critical('sender of transfer : {} does not have a pool share', [event.params.from.toHex()])
+      log.critical('sender of transfer : {} does not have a pool share', [
+        event.params.from.toHex(),
+      ])
+    } else {
+      poolShareFrom.balance = poolShareFrom.balance.minus(
+        tokenToDecimal(value, DEFAULT_DECIMALS),
+      )
+      poolShareFrom.save()
     }
-    poolShareFrom.balance -= tokenToDecimal(value, 18)
-    poolShareFrom.save()
-    if(poolShareFrom.balance.equals(ZERO_BD)){
+    if (!!poolShareFrom && poolShareFrom.balance.equals(ZERO_BD)) {
       store.remove('PoolShare', poolShareFrom.id)
-      
+
       let holders = pool.holders || []
       let from = Bytes.fromHexString(event.params.from.toHex()) as Bytes
       let index = holders.indexOf(from)
@@ -76,9 +91,12 @@ export function handleTransfer(event: Transfer): void {
       pool.holders = holders
     }
   }
-  if(!isBurn){
+  if (!isBurn) {
     if (poolShareTo == null) {
-      log.debug('creating poolShare with id: {} for liquidity provider {}, due to recipient of transfer event not having a pool share', [poolShareToId, event.params.to.toHex()])
+      log.debug(
+        'creating poolShare with id: {} for liquidity provider {}, due to recipient of transfer event not having a pool share',
+        [poolShareToId, event.params.to.toHex()],
+      )
       createPoolShareEntity(poolShareToId, poolId, event.params.to.toHex())
       poolShareTo = PoolShare.load(poolShareToId)
       let holders: Array<Bytes> = pool.holders || []
@@ -88,10 +106,13 @@ export function handleTransfer(event: Transfer): void {
         holders.push(to)
         pool.holders = holders
       }
-
     }
-    poolShareTo.balance += tokenToDecimal(value, 18)
-    poolShareTo.save()
+    if (poolShareTo) {
+      poolShareTo.balance = poolShareTo.balance.plus(
+        tokenToDecimal(value, DEFAULT_DECIMALS),
+      )
+      poolShareTo.save()
+    }
   }
 
   pool.holdersCount = BigInt.fromI32(pool.holders.length)

@@ -1,28 +1,18 @@
 import {
-  BigDecimal,
   Address,
+  BigDecimal,
   BigInt,
   Bytes,
   dataSource,
-  ethereum
+  ethereum,
 } from '@graphprotocol/graph-ts'
-import {
-  Pool,
-  User,
-  PoolToken,
-  PoolShare,
-  TokenPrice,
-  Transaction,
-  Balancer,
-  XToken,
-  Token
-} from '../types/schema'
-import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
-import { BToken } from '../types/templates/Pool/BToken'
-import { GnosisSafe } from '../types/templates/XToken/GnosisSafe'
-import { CRPFactory } from '../types/Factory/CRPFactory'
 import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
-
+import { CRPFactory } from '../types/Factory/CRPFactory'
+import { PoolShare, TokenPrice, Transaction, User } from '../types/schema'
+import { Balancer, Pool, Token, PoolToken, XToken } from '../wrappers'
+import { BToken } from '../types/templates/Pool/BToken'
+import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
+import { GnosisSafe } from '../types/templates/XToken/GnosisSafe'
 
 export let ZERO_BD = BigDecimal.fromString('0')
 
@@ -51,26 +41,38 @@ if (network == 'rinkeby') {
 export function hexToDecimal(hexString: string, decimals: i32): BigDecimal {
   let bytes = Bytes.fromHexString(hexString).reverse() as Bytes
   let bi = BigInt.fromUnsignedBytes(bytes)
-  let scale = BigInt.fromI32(10).pow(decimals as u8).toBigDecimal()
+  let scale = BigInt.fromI32(10)
+    .pow(decimals as u8)
+    .toBigDecimal()
   return bi.divDecimal(scale)
 }
 
 export function bigIntToDecimal(amount: BigInt, decimals: i32): BigDecimal {
-  let scale = BigInt.fromI32(10).pow(decimals as u8).toBigDecimal()
+  let scale = BigInt.fromI32(10)
+    .pow(decimals as u8)
+    .toBigDecimal()
   return amount.toBigDecimal().div(scale)
 }
 
 export function tokenToDecimal(amount: BigDecimal, decimals: i32): BigDecimal {
-  let scale = BigInt.fromI32(10).pow(decimals as u8).toBigDecimal()
+  let scale = BigInt.fromI32(10)
+    .pow(decimals as u8)
+    .toBigDecimal()
   return amount.div(scale)
 }
 
-export function createPoolShareEntity(id: string, pool: string, user: string): void {
+export function createPoolShareEntity(
+  id: string,
+  pool: string,
+  user: string,
+): void {
   let poolShare = new PoolShare(id)
 
   let gnosisSafe = GnosisSafe.bind(Address.fromString(user))
   let getOwnersCall = gnosisSafe.try_getOwners()
-  let userAddress = getOwnersCall.reverted ? 'CALCULATE_CPK' : getOwnersCall.value.pop().toHexString()
+  let userAddress = getOwnersCall.reverted
+    ? 'CALCULATE_CPK'
+    : getOwnersCall.value.pop().toHexString()
   createUserEntity(user, userAddress)
 
   poolShare.userAddress = user
@@ -79,7 +81,11 @@ export function createPoolShareEntity(id: string, pool: string, user: string): v
   poolShare.save()
 }
 
-export function createPoolTokenEntity(id: string, pool: string, address: string): void {
+export function createPoolTokenEntity(
+  id: string,
+  pool: string,
+  address: string,
+): void {
   let token = BToken.bind(Address.fromString(address))
   let tokenBytes = BTokenBytes.bind(Address.fromString(address))
   let symbol = ''
@@ -149,7 +155,7 @@ export function createPoolTokenEntity(id: string, pool: string, address: string)
 }
 
 export function updatePoolLiquidity(id: string): void {
-  let pool = Pool.load(id)
+  let pool = Pool.safeLoad(id)
   let tokensList: Array<Bytes> = pool.tokensList
 
   if (pool.tokensCount.equals(BigInt.fromI32(0))) {
@@ -158,49 +164,62 @@ export function updatePoolLiquidity(id: string): void {
     return
   }
 
-  if (!tokensList || pool.tokensCount.lt(BigInt.fromI32(2)) || !pool.publicSwap) return
+  if (!tokensList || pool.tokensCount.lt(BigInt.fromI32(2)) || !pool.publicSwap)
+    return
 
   // Find pool liquidity
 
   let poolLiquidity = ZERO_BD
-  let DAIToken = Token.load(DAI)
+  let DAIToken = Token.safeLoad(DAI)
   let DAIXTokenAddress = DAIToken.xToken
-  let WETHToken = Token.load(WETH)
+  let WETHToken = Token.safeLoad(WETH)
   let WETHXTokenAddress = WETHToken.xToken
-  let WBTCToken = Token.load(WBTC)
+  let WBTCToken = Token.safeLoad(WBTC)
   let WBTCXTokenAddress = WBTCToken.xToken
 
-  let DAIIsAComponent = false;
-  let WBTCIsAComponent = false;
-  let WETHIsAComponent = false;
+  let DAIIsAComponent = false
+  let WBTCIsAComponent = false
+  let WETHIsAComponent = false
   let WBTCTokenPrice = TokenPrice.load(WBTC)
   let WETHTokenPrice = TokenPrice.load(WETH)
 
-  for(let i:i32 = 0; i < tokensList.length; i++){
-    if(tokensList[i].toHex() == DAIXTokenAddress) DAIIsAComponent = true;
-    if(tokensList[i].toHex() == WBTCXTokenAddress) WBTCIsAComponent = true;
-    if(tokensList[i].toHex() == WETHXTokenAddress) WETHIsAComponent = true;
+  for (let i: i32 = 0; i < tokensList.length; i++) {
+    if (tokensList[i].toHex() == DAIXTokenAddress) DAIIsAComponent = true
+    if (tokensList[i].toHex() == WBTCXTokenAddress) WBTCIsAComponent = true
+    if (tokensList[i].toHex() == WETHXTokenAddress) WETHIsAComponent = true
   }
 
-  if (DAIIsAComponent){
+  if (DAIIsAComponent) {
     let poolTokenId = id.concat('-').concat(DAIXTokenAddress)
-    let poolToken = PoolToken.load(poolTokenId)
-    poolLiquidity = poolToken.balance.div(poolToken.denormWeight).times(pool.totalWeight)
-  } else if (WBTCIsAComponent && WBTCTokenPrice != null){
+    let poolToken = PoolToken.safeLoad(poolTokenId)
+    poolLiquidity = poolToken.balance
+      .div(poolToken.denormWeight)
+      .times(pool.totalWeight)
+  } else if (WBTCIsAComponent && WBTCTokenPrice != null) {
     let poolTokenId = id.concat('-').concat(WBTCXTokenAddress)
-    let poolToken = PoolToken.load(poolTokenId)
-    poolLiquidity = WBTCTokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
-  } else if (WETHIsAComponent && WETHTokenPrice != null){
+    let poolToken = PoolToken.safeLoad(poolTokenId)
+    poolLiquidity = WBTCTokenPrice.price
+      .times(poolToken.balance)
+      .div(poolToken.denormWeight)
+      .times(pool.totalWeight)
+  } else if (WETHIsAComponent && WETHTokenPrice != null) {
     let poolTokenId = id.concat('-').concat(WETHXTokenAddress)
-    let poolToken = PoolToken.load(poolTokenId)
-    poolLiquidity = WETHTokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
+    let poolToken = PoolToken.safeLoad(poolTokenId)
+    poolLiquidity = WETHTokenPrice.price
+      .times(poolToken.balance)
+      .div(poolToken.denormWeight)
+      .times(pool.totalWeight)
   }
 
   // // Create or update token price
 
-  for (let i: i32 = 0; poolLiquidity.gt(ZERO_BD) && i < tokensList.length; i++) {
+  for (
+    let i: i32 = 0;
+    poolLiquidity.gt(ZERO_BD) && i < tokensList.length;
+    i++
+  ) {
     // use the token
-    let tokenPriceId = XToken.load(tokensList[i].toHexString()).token
+    let tokenPriceId = XToken.safeLoad(tokensList[i].toHexString()).token
     let tokenPrice = TokenPrice.load(tokenPriceId)
     if (tokenPrice == null) {
       tokenPrice = new TokenPrice(tokenPriceId)
@@ -210,20 +229,27 @@ export function updatePoolLiquidity(id: string): void {
 
     // here we use the xtoken
     let poolTokenId = id.concat('-').concat(tokensList[i].toHexString())
-    let poolToken = PoolToken.load(poolTokenId)
+    let poolToken = PoolToken.safeLoad(poolTokenId)
 
     if (
-      pool.active && !pool.crp && pool.tokensCount.notEqual(BigInt.fromI32(0)) && pool.publicSwap &&
-      (tokenPrice.poolTokenId == poolTokenId || poolLiquidity.gt(tokenPrice.poolLiquidity))
+      pool.active &&
+      !pool.crp &&
+      pool.tokensCount.notEqual(BigInt.fromI32(0)) &&
+      pool.publicSwap &&
+      (tokenPrice.poolTokenId == poolTokenId ||
+        poolLiquidity.gt(tokenPrice.poolLiquidity))
     ) {
       tokenPrice.price = ZERO_BD
 
       if (poolToken.balance.gt(ZERO_BD)) {
-        tokenPrice.price = poolLiquidity.div(pool.totalWeight).times(poolToken.denormWeight).div(poolToken.balance)
+        tokenPrice.price = poolLiquidity
+          .div(pool.totalWeight)
+          .times(poolToken.denormWeight)
+          .div(poolToken.balance)
       }
 
-      tokenPrice.symbol = poolToken.symbol
-      tokenPrice.name = poolToken.name
+      tokenPrice.symbol = poolToken.symbol || ''
+      tokenPrice.name = poolToken.name || ''
       tokenPrice.decimals = poolToken.decimals
       tokenPrice.poolLiquidity = poolLiquidity
       tokenPrice.poolTokenId = poolTokenId
@@ -237,29 +263,44 @@ export function updatePoolLiquidity(id: string): void {
   let denormWeight = ZERO_BD
 
   for (let i: i32 = 0; i < tokensList.length; i++) {
-    let tokenPriceId = XToken.load(tokensList[i].toHexString()).token
+    let tokenPriceId = XToken.safeLoad(tokensList[i].toHexString()).token
     let tokenPrice = TokenPrice.load(tokenPriceId)
     if (tokenPrice !== null) {
       let poolTokenId = id.concat('-').concat(tokensList[i].toHexString())
       let poolToken = PoolToken.load(poolTokenId)
-      if (tokenPrice.price.gt(ZERO_BD) && poolToken.denormWeight.gt(denormWeight)) {
+      if (
+        poolToken !== null &&
+        tokenPrice.price.gt(ZERO_BD) &&
+        poolToken.denormWeight.gt(denormWeight)
+      ) {
         denormWeight = poolToken.denormWeight
-        liquidity = tokenPrice.price.times(poolToken.balance).div(poolToken.denormWeight).times(pool.totalWeight)
+        liquidity = tokenPrice.price
+          .times(poolToken.balance)
+          .div(poolToken.denormWeight)
+          .times(pool.totalWeight)
       }
     }
   }
 
-  let factory = Balancer.load('1')
-  factory.totalLiquidity = factory.totalLiquidity.minus(pool.liquidity).plus(liquidity)
-  factory.save()
-
   pool.liquidity = liquidity
   pool.save()
+
+  let factory = Balancer.safeLoad('1')
+
+  factory.totalLiquidity = factory.totalLiquidity
+    .minus(pool.liquidity)
+    .plus(liquidity)
+  factory.save()
 }
 
-export function decrPoolCount(active: boolean, finalized: boolean, crp: boolean): void {
+export function decrPoolCount(
+  active: boolean,
+  finalized: boolean,
+  crp: boolean,
+): void {
   if (active) {
-    let factory = Balancer.load('1')
+    let factory = Balancer.safeLoad('1')
+
     factory.poolCount = factory.poolCount - 1
     if (finalized) factory.finalizedPoolCount = factory.finalizedPoolCount - 1
     if (crp) factory.crpCount = factory.crpCount - 1
@@ -267,10 +308,16 @@ export function decrPoolCount(active: boolean, finalized: boolean, crp: boolean)
   }
 }
 
-export function saveTransaction(event: ethereum.Event, eventName: string): void {
-  let blockAuthor = event.block.author.toHex()
-  let transactionTo = event.transaction.to.toHex()
-  let tx = event.transaction.hash.toHexString().concat('-').concat(event.logIndex.toString())
+export function saveTransaction(
+  event: ethereum.Event,
+  eventName: string,
+): void {
+  // let blockAuthor = event.block.author.toHex()
+  // let transactionTo = event.transaction.to.toHex()
+  let tx = event.transaction.hash
+    .toHexString()
+    .concat('-')
+    .concat(event.logIndex.toString())
   let userAddress = event.transaction.from.toHex()
   let transaction = Transaction.load(tx)
   if (transaction == null) {
@@ -293,11 +340,7 @@ export function createUserEntity(address: string, userAddress: string): void {
   if (User.load(address) == null) {
     let user = new User(address)
     user.userAddress = userAddress
-    if (address == userAddress) {
-      user.isCpkId = false
-    } else {
-      user.isCpkId = true
-    }
+    user.isCpkId = address != userAddress
     user.save()
   }
 }
@@ -309,15 +352,17 @@ export function isCrp(address: Address): boolean {
   return isCrp.value
 }
 
-export function getCrpUnderlyingPool(crp: ConfigurableRightsPool): string | null {
+export function getCrpUnderlyingPool(
+  crp: ConfigurableRightsPool,
+): string | null {
   let bPool = crp.try_bPool()
-  if (bPool.reverted) return null;
+  if (bPool.reverted) return null
   return bPool.value.toHexString()
 }
 
 export function getCrpController(crp: ConfigurableRightsPool): string | null {
   let controller = crp.try_getController()
-  if (controller.reverted) return null;
+  if (controller.reverted) return null
   return controller.value.toHexString()
 }
 
