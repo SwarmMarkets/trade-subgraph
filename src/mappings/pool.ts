@@ -253,10 +253,14 @@ export function handleExitPool(event: LOG_EXIT): void {
 export function handleSwap(event: LOG_SWAP): void {
   let poolId = event.address.toHex()
 
-  let tokenIn = event.params.tokenIn.toHex()
-  let poolTokenInId = poolId.concat('-').concat(tokenIn.toString())
-  let poolTokenIn = PoolToken.load(poolTokenInId)
-  let tokenAmountIn = tokenToDecimal(event.params.tokenAmountIn.toBigDecimal(), poolTokenIn.decimals)
+  let xTokenIn = event.params.tokenIn.toHex()
+  let tokenIn = XToken.safeLoad(xTokenIn).token
+  let poolTokenInId = poolId.concat('-').concat(xTokenIn.toString())
+  let poolTokenIn = PoolToken.safeLoad(poolTokenInId)
+  let tokenAmountIn = tokenToDecimal(
+    event.params.tokenAmountIn.toBigDecimal(),
+    poolTokenIn.decimals,
+  )
   let newAmountIn = poolTokenIn.balance.plus(tokenAmountIn)
   poolTokenIn.balance = newAmountIn
   poolTokenIn.save()
@@ -336,9 +340,9 @@ export function handleSwap(event: LOG_SWAP): void {
 
   swap.caller = event.params.caller
   swap.tokenIn = event.params.tokenIn
-  swap.tokenInSym = poolTokenIn.symbol
+  swap.tokenInSym = Token.safeLoad(tokenIn).symbol
   swap.tokenOut = event.params.tokenOut
-  swap.tokenOutSym = poolTokenOut.symbol
+  swap.tokenOutSym = Token.safeLoad(tokenOut).symbol
   swap.tokenAmountIn = tokenAmountIn
   swap.tokenAmountOut = tokenAmountOut
   swap.poolAddress = event.address.toHex()
