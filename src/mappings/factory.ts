@@ -74,7 +74,7 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
   pool.joinsCount = BigInt.fromI32(0)
   pool.exitsCount = BigInt.fromI32(0)
   pool.swapsCount = BigInt.fromI32(0)
-  pool.factoryID = event.address.toHexString()
+  pool.factoryID = factory.id
   pool.tokensList = []
   pool.holders = []
   pool.tx = event.transaction.hash

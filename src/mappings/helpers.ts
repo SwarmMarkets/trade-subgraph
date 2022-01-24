@@ -282,15 +282,15 @@ export function updatePoolLiquidity(id: string): void {
     }
   }
 
-  pool.liquidity = liquidity
-  pool.save()
-
   let factory = Balancer.safeLoad('1')
 
   factory.totalLiquidity = factory.totalLiquidity
     .minus(pool.liquidity)
     .plus(liquidity)
   factory.save()
+
+  pool.liquidity = liquidity
+  pool.save()
 }
 
 export function decrPoolCount(
