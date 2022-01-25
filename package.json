@@ -2,11 +2,11 @@
   "name": "trade-subgraph",
   "version": "0.1.0",
   "scripts": {
-    "prepare:config": "mustache config/$NETWORK.json subgraph.yaml.mustache > subgraph.yaml",
+    "generate:config": "mustache config/$NETWORK.json subgraph.yaml.mustache > subgraph.yaml",
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
     "deploy": "graph deploy --access-token $ACCESS_TOKEN $GITHUB_USERNAME/$SUBGRAPH_NAME --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
-    "prepare:config:env": "env-cmd yarn prepare:config",
+    "generate:config:env": "env-cmd yarn generate:config",
     "deploy:with:env": "env-cmd yarn deploy",
     "deploy:local": "graph deploy swarmmarkets/trade-mainnet subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
     "create:local": "graph create swarmmarkets/trade-mainnet --node http://127.0.0.1:8020",

@@ -22,6 +22,11 @@ jobs:
         with:
           install-command: yarn --frozen-lockfile --silent
 
+      - name: Generate configuration file
+        env:
+          NETWORK: mainnet
+        run: yarn generate:config
+
       - name: Code Generation
         run: yarn codegen
 
