@@ -1,0 +1,14 @@
+{
+  "network": "matic",
+  "schemaFileName": "schema.graphql",
+  "dataSources": {
+    "factory": {
+      "address": "0x991Fd11876A438af7BcaDc98f4b3CF201bdf6191",
+      "startBlock": 23158523
+    },
+    "xTokenWrapper": {
+      "address": "0x6cDDe4eD9165405c1914b229d3cD4Ac9C354C331",
+      "startBlock": 23343641
+    }
+  }
+}

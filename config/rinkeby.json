@@ -1,0 +1,18 @@
+{
+  "network": "rinkeby",
+  "schemaFileName": "schema.rinkeby.graphql",
+  "dataSources": {
+    "factory": {
+      "address": "0xc7D87c0B11288de9fD627e9383f63C953e2FdD72",
+      "startBlock": 9780125
+    },
+    "xTokenWrapper": {
+      "address": "0x5c2BDE960cdF557B882Ba293F5e036E1A1316aa0",
+      "startBlock": 9780125
+    },
+    "dOTCManager": {
+      "address": "0x01491B1589C7138F95ecc6E930d2c8c0fAC221Cf",
+      "startBlock": 9948936
+    }
+  }
+}
