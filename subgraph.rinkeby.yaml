@@ -50,33 +50,6 @@ dataSources:
       eventHandlers:
         - event: RegisterToken(indexed address,indexed address)
           handler: handleRegisterToken
-  - kind: ethereum/contract
-    name: dOTC
-    network: rinkeby
-    source:
-      address: "0x01491B1589C7138F95ecc6E930d2c8c0fAC221Cf"
-      abi: DOTCManager
-      startBlock: 9948936
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      file: ./src/mappings/dOTCManager.ts
-      entities:
-        - Offers
-        - Orders
-      abis:
-        - name: DOTCManager
-          file: ./abis/DOTCManager.json
-      eventHandlers:
-        - event: CreatedOffer(uint256,address,address,address,uint256,uint256,uint8,address,bool)
-          handler: handleNewOffer
-        - event: CreatedOrder(uint256,uint256,uint256,address,uint256)
-          handler: handleNewOrder
-        - event: CompletedOffer(uint256)
-          handler: handleOfferCompleted
-        - event: CancledOffer(uint256,address,uint256)
-          handler: handleCanceledOffer
 templates:
   - kind: ethereum/contract
     name: Pool
