@@ -47,6 +47,9 @@ jobs:
       - name: Build
         run: yarn build
 
+      - name: Lint
+        run: yarn lint
+
       - name: Deploy
         env:
           ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
