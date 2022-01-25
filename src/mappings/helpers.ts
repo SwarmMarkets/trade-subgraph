@@ -24,18 +24,23 @@ let WBTC = '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599'
 let DAI = '0x6b175474e89094c44da98b954eedeac495271d0f'
 let CRP_FACTORY = '0xed52D8E202401645eDAD1c0AA21e872498ce47D0'
 
-if (network == 'kovan') {
-  WETH = '0xd0a1e359811322d97991e03f863a0c30c2cf029c'
-  WBTC = 'fill it when we deploy it'
-  DAI = '0x1528f3fcc26d13f7079325fb78d9442607781c8c'
-  CRP_FACTORY = '0x53265f0e014995363AE54DAd7059c018BaDbcD74'
-}
-
 if (network == 'rinkeby') {
   WETH = '0xc778417e063141139fce010982780140aa0cd5ab'
   WBTC = '0x2370694665fecc03c86693e9a03b6874e9321372'
   DAI = '0x98e06323f0008dd8990229c3ff299353b69491c0'
   CRP_FACTORY = '0xA3F9145CB0B50D907930840BB2dcfF4146df8Ab4'
+}
+
+if (network == 'matic') {
+  WETH = '0x7ceb23fd6bc0add59e62ac25578270cff1b9f619'
+  WBTC = '0x1bfd67037b42cf73acf2047067bd4f2c47d9bfd6'
+  DAI = '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063'
+}
+
+if (network == 'mumbai') {
+  WETH = '0x10d74c806604a074b48388c92e6de0bd211842de'
+  WBTC = '0x37d45f6f8fe9e326654115eabf6214031345bbd2'
+  DAI = '0x40ff8ecf26b645bddde0ea55fc92ba9f9795d2ef'
 }
 
 export function hexToDecimal(hexString: string, decimals: i32): BigDecimal {
@@ -119,28 +124,6 @@ export function createPoolTokenEntity(
   if (!decimalCall.reverted) {
     decimals = decimalCall.value
   }
-
-  // COMMENT THE LINES ABOVE OUT FOR LOCAL DEV ON KOVAN
-
-  // !!! COMMENT THE LINES BELOW OUT FOR NON-LOCAL DEPLOYMENT
-  // This code allows Symbols to be added when testing on local Kovan
-  /*
-  if(address == '0xd0a1e359811322d97991e03f863a0c30c2cf029c')
-    symbol = 'WETH';
-  else if(address == '0x1528f3fcc26d13f7079325fb78d9442607781c8c')
-    symbol = 'DAI'
-  else if(address == '0xef13c0c8abcaf5767160018d268f9697ae4f5375')
-    symbol = 'MKR'
-  else if(address == '0x2f375e94fc336cdec2dc0ccb5277fe59cbf1cae5')
-    symbol = 'USDC'
-  else if(address == '0x1f1f156e0317167c11aa412e3d1435ea29dc3cce')
-    symbol = 'BAT'
-  else if(address == '0x86436bce20258a6dcfe48c9512d4d49a30c4d8c4')
-    symbol = 'SNX'
-  else if(address == '0x8c9e6c40d3402480ace624730524facc5482798c')
-    symbol = 'REP'
-  */
-  // !!! COMMENT THE LINES ABOVE OUT FOR NON-LOCAL DEPLOYMENT
 
   let poolToken = new PoolToken(id)
   poolToken.poolId = pool
