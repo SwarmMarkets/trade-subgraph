@@ -1,6 +1,16 @@
 {
-  "extends": "./node_modules/@graphprotocol/graph-ts/tsconfig.json",
+  "extends": "./node_modules/assemblyscript/std/assembly.json",
   "compilerOptions": {
-    "types": ["@graphprotocol/graph-ts"]
-  }
+    "types": ["@graphprotocol/graph-ts", "assemblyscript/std/assembly", "node"],
+    "lib": ["DOM", "ES2017"],
+    "skipLibCheck": true,                     /* Skip type checking of declaration files. */
+    "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
+    "strictNullChecks": true,
+  },
+  "exclude": [
+    "src/types"
+  ],
+  "include": [
+    "src/**/*.ts"
+  ]
 }
