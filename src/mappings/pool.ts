@@ -109,38 +109,35 @@ export function handleFinalize(event: LOG_CALL): void {
 export function handleRebind(event: LOG_CALL): void {
   let poolId = event.address.toHex()
   let pool = Pool.safeLoad(poolId)
-  let tokenBytes = Bytes.fromHexString(
+
+  // xToken to rebind
+  let targetXToken = Bytes.fromHexString(
     event.params.data.toHexString().slice(34, 74),
   ) as Bytes
+
   let tokensList = pool.tokensList || []
-  if (tokensList.indexOf(tokenBytes) == -1) {
-    tokensList.push(tokenBytes)
+  if (tokensList.indexOf(targetXToken) == -1) {
+    tokensList.push(targetXToken)
   }
   pool.tokensList = tokensList
   pool.tokensCount = BigInt.fromI32(tokensList.length)
 
-  let address = Address.fromString(
-    event.params.data.toHexString().slice(34, 74),
-  )
-  let denormWeight = hexToDecimal(
+  // new denorm weight
+  let newDenormWeight = hexToDecimal(
     event.params.data.toHexString().slice(138),
     18,
   )
 
-  let poolTokenId = poolId.concat('-').concat(address.toHexString())
+  let poolTokenId = poolId.concat('-').concat(targetXToken.toHexString())
   let poolToken = PoolToken.load(poolTokenId)
 
   if (poolToken == null) {
-    createPoolTokenEntity(poolTokenId, poolId, address.toHexString())
+    createPoolTokenEntity(poolTokenId, poolId, targetXToken.toHexString())
     poolToken = PoolToken.safeLoad(poolTokenId)
-    pool.totalWeight = pool.totalWeight.plus(denormWeight)
+    pool.totalWeight = pool.totalWeight.plus(newDenormWeight)
   } else {
     let oldWeight = poolToken.denormWeight
-    if (denormWeight > oldWeight) {
-      pool.totalWeight = pool.totalWeight.plus(denormWeight.minus(oldWeight))
-    } else {
-      pool.totalWeight = pool.totalWeight.minus(oldWeight.minus(denormWeight))
-    }
+    pool.totalWeight = pool.totalWeight.minus(oldWeight).plus(newDenormWeight)
   }
 
   let balance = hexToDecimal(
@@ -149,7 +146,7 @@ export function handleRebind(event: LOG_CALL): void {
   )
 
   poolToken.balance = balance
-  poolToken.denormWeight = denormWeight
+  poolToken.denormWeight = newDenormWeight
   poolToken.save()
 
   if (balance.equals(ZERO_BD)) {
