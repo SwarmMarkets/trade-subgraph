@@ -41,9 +41,12 @@ jobs:
         with:
           install-command: yarn --frozen-lockfile --silent
 
-      - name: Code Generation
+      - name: Generate configuration file
         env:
-          GRAPH_CONFIG_FILE: "subgraph.polygon.yaml"
+          NETWORK: matic
+        run: yarn generate:config
+
+      - name: Code Generation
         run: yarn codegen
 
       - name: Build
@@ -54,5 +57,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
           SUBGRAPH_NAME: ${{ inputs.SUBGRAPH_NAME }}${{ github.event.inputs.SUBGRAPH_NAME }}
-          GRAPH_CONFIG_FILE: "subgraph.polygon.yaml"
         run: yarn deploy

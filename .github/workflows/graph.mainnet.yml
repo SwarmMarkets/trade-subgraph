@@ -41,6 +41,11 @@ jobs:
         with:
           install-command: yarn --frozen-lockfile --silent
 
+      - name: Generate configuration file
+        env:
+          NETWORK: mainnet
+        run: yarn generate:config
+
       - name: Code Generation
         run: yarn codegen
 
@@ -52,5 +57,4 @@ jobs:
           ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
           SUBGRAPH_NAME: ${{ inputs.SUBGRAPH_NAME }}${{ github.event.inputs.SUBGRAPH_NAME }}
-          GRAPH_CONFIG_FILE: "subgraph.yaml"
         run: yarn deploy
