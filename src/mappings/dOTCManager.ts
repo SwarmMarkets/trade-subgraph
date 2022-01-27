@@ -19,7 +19,7 @@ export function handleNewOffer(event: CreatedOffer): void {
     offer.offerType = BigInt.fromI32(event.params.offerType);
     offer.specialAddress = event.params.specialAddress;
     offer.isCompleted = event.params.isComplete;
-    offer.availableAmount = event.params.amountOut;
+    offer.availableAmount = bigIntToDecimal(event.params.amountOut, tokenOut.decimals);
     offer.cancelled = false;
     offer.save();
 }
@@ -36,8 +36,9 @@ export function handleNewOrder(event: CreatedOrder):void{
     order.amountToReceive = bigIntToDecimal(event.params.amountToReceive, tokenToReceive.decimals);
     order.orderedBy = event.params.orderedBy;
     order.offers = offer.id;
-    offer.availableAmount -= event.params.amountPaid;
     order.save();
+    offer.availableAmount = offer.availableAmount.minus(bigIntToDecimal(event.params.amountPaid, tokenPaid.decimals));
+    offer.save();
 }
 
 export function handleOfferCompleted(event: CompletedOffer): void {
