@@ -41,18 +41,23 @@ jobs:
         with:
           install-command: yarn --frozen-lockfile --silent
 
-      - name: Code Generation
+      - name: Generate configuration file
         env:
-          GRAPH_CONFIG_FILE: "subgraph.mumbai.yaml"
+          NETWORK: mumbai
+        run: yarn generate:config
+
+      - name: Code Generation
         run: yarn codegen
 
       - name: Build
         run: yarn build
+
+      - name: Lint
+        run: yarn lint
 
       - name: Deploy
         env:
           ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
           GITHUB_USERNAME: ${{ github.repository_owner }}
           SUBGRAPH_NAME: ${{ inputs.SUBGRAPH_NAME }}${{ github.event.inputs.SUBGRAPH_NAME }}
-          GRAPH_CONFIG_FILE: "subgraph.mumbai.yaml"
         run: yarn deploy

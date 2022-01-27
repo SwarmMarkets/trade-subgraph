@@ -1,0 +1,14 @@
+{
+  "network": "mainnet",
+  "schemaFileName": "schema.graphql",
+  "dataSources": {
+    "factory": {
+      "address": "0x9186503AF1D7D3317b4C2c44A815BE984838C296",
+      "startBlock": 12434307
+    },
+    "xTokenWrapper": {
+      "address": "0x2b9dc65253c035Eb21778cB3898eab5A0AdA0cCe",
+      "startBlock": 12434318
+    }
+  }
+}

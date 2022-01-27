@@ -2,15 +2,15 @@ specVersion: 0.0.2
 description: Swarm Network provides open technology to enable the creation and management of digital assets.
 repository: https://github.com/SwarmMarkets/trade-subgraph
 schema:
-  file: ./schema.graphql
+  file: ./{{ schemaFileName }}
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: matic
+    network: {{ network }}
     source:
-      address: "0x991Fd11876A438af7BcaDc98f4b3CF201bdf6191"
+      address: "{{ dataSources.factory.address }}"
       abi: Factory
-      startBlock: 0
+      startBlock: {{ dataSources.factory.startBlock }}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -30,11 +30,11 @@ dataSources:
           handler: handleNewPool
   - kind: ethereum/contract
     name: XTokenWrapper
-    network: matic
+    network: {{ network }}
     source:
-      address: "0x6cDDe4eD9165405c1914b229d3cD4Ac9C354C331"
+      address: "{{ dataSources.xTokenWrapper.address }}"
       abi: XTokenWrapper
-      startBlock: 0
+      startBlock: {{ dataSources.xTokenWrapper.startBlock }}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -50,10 +50,39 @@ dataSources:
       eventHandlers:
         - event: RegisterToken(indexed address,indexed address)
           handler: handleRegisterToken
+{{ #dataSources.dOTCManager }}
+  - kind: ethereum/contract
+    name: dOTC
+    network: rinkeby
+    source:
+      address: "{{ dataSources.dOTCManager.address }}"
+      abi: DOTCManager
+      startBlock: {{ dataSources.dOTCManager.startBlock }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/dOTCManager.ts
+      entities:
+        - Offers
+        - Orders
+      abis:
+        - name: DOTCManager
+          file: ./abis/DOTCManager.json
+      eventHandlers:
+        - event: CreatedOffer(indexed uint256,indexed address,address,address,uint256,uint256,uint8,address,bool,uint256)
+          handler: handleNewOffer
+        - event: CreatedOrder(indexed uint256,indexed uint256,uint256,indexed address,uint256)
+          handler: handleNewOrder
+        - event: CompletedOffer(uint256)
+          handler: handleOfferCompleted
+        - event: CanceledOffer(indexed uint256,address,uint256)
+          handler: handleCanceledOffer
+{{ /dataSources.dOTCManager }}
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: matic
+    network: {{ network }}
     source:
       abi: Pool
     mapping:
@@ -102,7 +131,7 @@ templates:
           handler: handleSwap
   - kind: ethereum/contract
     name: CrpController
-    network: matic
+    network: {{ network }}
     source:
       abi: ConfigurableRightsPool
     mapping:
@@ -120,7 +149,7 @@ templates:
           handler: handleSetCrpController
   - kind: ethereum/contract
     name: XToken
-    network: matic
+    network: {{ network }}
     source:
       abi: XToken
     mapping:

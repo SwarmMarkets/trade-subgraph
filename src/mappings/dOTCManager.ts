@@ -1,7 +1,8 @@
 import { CreatedOffer, CreatedOrder, CompletedOffer, CanceledOffer } from './../types/dOTC/DOTCManager';
 import { BigInt } from '@graphprotocol/graph-ts';
-import { Offer, Order, Token } from '../types/schema';
-import { bigIntToDecimal } from './helpers';
+import { Offer, Order } from '../types/schema';
+import { bigIntToDecimal, ZERO_BD } from './helpers'
+import { Token } from '../wrappers'
 
 export function handleNewOffer(event: CreatedOffer): void {
     let offer = Offer.load(event.params.offerId.toHex());
@@ -9,13 +10,22 @@ export function handleNewOffer(event: CreatedOffer): void {
         offer = new Offer(event.params.offerId.toHex());
     }
     offer.maker = event.params.maker;
-    let tokenIn = Token.load(event.params.tokenIn.toHexString());
-    offer.tokenIn = tokenIn.id;
-    let tokenOut = Token.load(event.params.tokenOut.toHexString());
-    offer.tokenOut = tokenOut.id;
-    offer.amountIn = bigIntToDecimal(event.params.amountIn, tokenIn.decimals);
-    offer.amountOut = bigIntToDecimal(event.params.amountOut, tokenOut.decimals);
-    offer.price = offer.amountOut.div(offer.amountIn);
+    
+    let tokenIn = Token.safeLoad(event.params.tokenIn.toHexString())
+    offer.tokenIn = tokenIn.id
+    offer.amountIn = bigIntToDecimal(event.params.amountIn, tokenIn.decimals)
+
+    let tokenOut = Token.safeLoad(event.params.tokenOut.toHexString())
+    offer.tokenOut = tokenOut.id
+    offer.amountOut = bigIntToDecimal(event.params.amountOut, tokenOut.decimals)
+
+    
+    if (offer.amountOut.notEqual(ZERO_BD) && offer.amountIn.notEqual(ZERO_BD)) {
+        offer.price = offer.amountOut.div(offer.amountIn)
+    } else {
+        offer.price = ZERO_BD
+    }
+
     offer.offerType = BigInt.fromI32(event.params.offerType);
     offer.specialAddress = event.params.specialAddress;
     offer.isCompleted = event.params.isComplete;
@@ -30,23 +40,40 @@ export function handleNewOrder(event: CreatedOrder):void{
     if (order == null) {
         order = new Order(event.params.orderId.toHex());
     }
-    let tokenPaid = Token.load(offer.tokenOut);
-    order.amountPaid = bigIntToDecimal(event.params.amountPaid, tokenPaid.decimals);
-    let tokenToReceive = Token.load(offer.tokenIn);
-    order.amountToReceive = bigIntToDecimal(event.params.amountToReceive, tokenToReceive.decimals);
-    order.orderedBy = event.params.orderedBy;
-    order.offers = offer.id;
+
+    if (offer != null) {
+        let tokenPaid = Token.safeLoad(offer.tokenOut)
+        order.amountPaid = bigIntToDecimal(
+        event.params.amountPaid,
+        tokenPaid.decimals,
+        )
+
+        let tokenToReceive = Token.safeLoad(offer.tokenIn)
+        order.amountToReceive = bigIntToDecimal(
+        event.params.amountToReceive,
+        tokenToReceive.decimals,
+        )
+
+        order.offers = offer.id    
+        offer.availableAmount = offer.availableAmount.minus(
+            bigIntToDecimal(event.params.amountPaid, tokenPaid.decimals)
+        );
+        offer.save();
+    } else {
+        order.amountPaid = ZERO_BD
+        order.amountToReceive = ZERO_BD
+    }
+
+    order.orderedBy = event.params.orderedBy
     order.save();
-    offer.availableAmount = offer.availableAmount.minus(bigIntToDecimal(event.params.amountPaid, tokenPaid.decimals));
-    offer.save();
 }
 
 export function handleOfferCompleted(event: CompletedOffer): void {
-    let offer = Offer.load(event.params.offerId.toHex());
-    if (offer != null) {
-        offer.isCompleted = true;
-        offer.save();
-    }
+  let offer = Offer.load(event.params.offerId.toHex())
+  if (offer != null) {
+    offer.isCompleted = true
+    offer.save()
+  }
 }
 
 export function handleCanceledOffer(event: CanceledOffer): void{
@@ -56,4 +83,3 @@ export function handleCanceledOffer(event: CanceledOffer): void{
         offer.save();
     }
 }
-
