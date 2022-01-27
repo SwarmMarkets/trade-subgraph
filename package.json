@@ -2,15 +2,20 @@
   "name": "trade-subgraph",
   "version": "0.1.0",
   "scripts": {
-    "create:local": "graph create swarmmarkets/trade-mainnet --node http://127.0.0.1:8020",
-    "codegen": "graph codegen --output-dir src/types/ $GRAPH_CONFIG_FILE",
-    "build": "graph build",
+    "clean": "rm -rf ./build src/types",
+    "codegen": "graph codegen --output-dir src/types/",
+    "build": "graph build $GRAPH_CONFIG_FILE",
     "deploy": "graph deploy --access-token $ACCESS_TOKEN $GITHUB_USERNAME/$SUBGRAPH_NAME $GRAPH_CONFIG_FILE --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
-    "deploy:local": "graph deploy swarmmarkets/trade-mainnet subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
+    "codegen:with:env": "env-cmd yarn codegen",
+    "build:with:env": "env-cmd yarn codegen",
+    "deploy:with:env": "env-cmd yarn deploy",
+    "deploy:local": "graph deploy swarmmarkets/trade-mainnet subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
+    "create:local": "graph create swarmmarkets/trade-mainnet --node http://127.0.0.1:8020"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.20.0",
-    "@graphprotocol/graph-ts": "^0.20.1"
+    "@graphprotocol/graph-ts": "^0.20.1",
+    "env-cmd": "^10.1.0"
   },
   "dependencies": {
     "babel-polyfill": "^6.26.0",

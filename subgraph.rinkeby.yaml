@@ -54,9 +54,9 @@ dataSources:
     name: dOTC
     network: rinkeby
     source:
-      address: "0xEc8f971a15d530a0966e49bDeC3470d8D3030eA0"
+      address: "0x01491B1589C7138F95ecc6E930d2c8c0fAC221Cf"
       abi: DOTCManager
-      startBlock: 9938498
+      startBlock: 9948936
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -69,7 +69,7 @@ dataSources:
         - name: DOTCManager
           file: ./abis/DOTCManager.json
       eventHandlers:
-        - event: CreatedOffer(uint256,address,address,address,uint256,uint256,uint8,address,bool)
+        - event: CreatedOffer(uint256,address,address,address,uint256,uint256,uint8,address,bool,uint256)
           handler: handleNewOffer
         - event: CreatedOrder(uint256,uint256,uint256,address,uint256)
           handler: handleNewOrder
