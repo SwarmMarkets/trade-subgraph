@@ -6,8 +6,9 @@ import {
   CreatedOrder,
 } from '../types/dOTC/DOTCManager'
 import { Offer, Order } from '../types/schema'
-import { bigIntToDecimal, ZERO_BD } from './helpers'
+import { bigIntToDecimal } from './helpers'
 import { Token } from '../wrappers'
+import { ZERO_BD } from '../constants/math'
 
 export function handleNewOffer(event: CreatedOffer): void {
   let offer = Offer.load(event.params.offerId.toHex())

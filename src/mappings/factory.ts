@@ -1,4 +1,4 @@
-import { Address, BigDecimal, BigInt, ByteArray } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, ByteArray } from '@graphprotocol/graph-ts'
 import { SPTs as disabledSPTs } from '../disabled-tokens'
 import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
 import { LOG_NEW_POOL } from '../types/Factory/Factory'
@@ -14,8 +14,8 @@ import {
   getCrpRights,
   getCrpSymbol,
   isCrp,
-  ZERO_BD,
 } from './helpers'
+import { ZERO_BD, ZERO_BI } from '../constants/math'
 
 export function handleNewPool(event: LOG_NEW_POOL): void {
   let factory = Balancer.load('1')
@@ -28,7 +28,7 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
     factory.finalizedPoolCount = 0
     factory.crpCount = 0
     factory.privateCount = 0
-    factory.txCount = BigInt.fromI32(0)
+    factory.txCount = ZERO_BI
     factory.totalLiquidity = ZERO_BD
     factory.totalSwapVolume = ZERO_BD
     factory.totalSwapFee = ZERO_BD
@@ -69,11 +69,11 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
   pool.totalSwapFee = ZERO_BD
   pool.liquidity = ZERO_BD
   pool.createTime = event.block.timestamp.toI32()
-  pool.tokensCount = BigInt.fromI32(0)
-  pool.holdersCount = BigInt.fromI32(0)
-  pool.joinsCount = BigInt.fromI32(0)
-  pool.exitsCount = BigInt.fromI32(0)
-  pool.swapsCount = BigInt.fromI32(0)
+  pool.tokensCount = ZERO_BI
+  pool.holdersCount = ZERO_BI
+  pool.joinsCount = ZERO_BI
+  pool.exitsCount = ZERO_BI
+  pool.swapsCount = ZERO_BI
   pool.factoryID = factory.id
   pool.tokensList = []
   pool.holders = []

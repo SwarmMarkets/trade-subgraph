@@ -6,6 +6,7 @@ import {
   dataSource,
   ethereum,
 } from '@graphprotocol/graph-ts'
+import { DEFAULT_DECIMALS } from '../constants'
 import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
 import { CRPFactory } from '../types/Factory/CRPFactory'
 import { PoolShare, TokenPrice, Transaction, User } from '../types/schema'
@@ -13,8 +14,7 @@ import { Balancer, Pool, Token, PoolToken, XToken } from '../wrappers'
 import { BToken } from '../types/templates/Pool/BToken'
 import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
 import { GnosisSafe } from '../types/templates/XToken/GnosisSafe'
-
-export let ZERO_BD = BigDecimal.fromString('0')
+import { BD_2, BI_10, BI_2, ZERO_BI, ZERO_BD } from '../constants/math'
 
 let network = dataSource.network()
 
