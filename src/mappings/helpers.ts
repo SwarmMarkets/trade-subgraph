@@ -3,10 +3,10 @@ import {
   BigDecimal,
   BigInt,
   Bytes,
-  dataSource,
   ethereum,
 } from '@graphprotocol/graph-ts'
-import { DEFAULT_DECIMALS } from '../constants'
+import { CRP_FACTORY } from '../constants/crp-factory'
+import { DEFAULT_DECIMALS } from '../constants/common'
 import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
 import { CRPFactory } from '../types/Factory/CRPFactory'
 import { PoolShare, Transaction, User } from '../types/schema'
@@ -21,30 +21,8 @@ import {
 import { BToken } from '../types/templates/Pool/BToken'
 import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
 import { GnosisSafe } from '../types/templates/XToken/GnosisSafe'
-import { BD_2, BI_10, BI_2, ZERO_BI, ZERO_BD } from '../constants/math'
-
-let network = dataSource.network()
-
-// Config for mainnet
-let USDC = '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48'
-let DAI = '0x6b175474e89094c44da98b954eedeac495271d0f'
-let CRP_FACTORY = '0xed52D8E202401645eDAD1c0AA21e872498ce47D0'
-
-if (network == 'rinkeby') {
-  USDC = '0x775badfdcc4478ba25d55f076b781fd66cdaf408'
-  DAI = '0x98e06323f0008dd8990229c3ff299353b69491c0'
-  CRP_FACTORY = '0xA3F9145CB0B50D907930840BB2dcfF4146df8Ab4'
-}
-
-if (network == 'matic') {
-  USDC = '0x2791bca1f2de4661ed88a30c99a7a9449aa84174'
-  DAI = '0x8f3cf7ad23cd3cadbd9735aff958023239c6a063'
-}
-
-if (network == 'mumbai') {
-  USDC = '0x234201e48499b104321cb482beb5a7ae5f3d9627'
-  DAI = '0x40ff8ecf26b645bddde0ea55fc92ba9f9795d2ef'
-}
+import { BD_2, BI_10, BI_2, ZERO_BD } from '../constants/math'
+import { DAI, USDC } from '../constants/stablecoins'
 
 export function hexToDecimal(hexString: string, decimals: i32): BigDecimal {
   let bytes = Bytes.fromHexString(hexString).reverse() as Bytes
@@ -136,7 +114,7 @@ export function updatePoolLiquidity(poolId: string): void {
   let pool = Pool.safeLoad(poolId)
   let tokensList: Array<Bytes> = pool.tokensList
 
-  if (pool.tokensCount.equals(ZERO_BI)) {
+  if (pool.tokensCount.isZero()) {
     pool.liquidity = ZERO_BD
     pool.save()
     return

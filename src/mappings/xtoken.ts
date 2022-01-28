@@ -1,5 +1,5 @@
 import { Address, BigInt, Bytes, log, store } from '@graphprotocol/graph-ts'
-import { DEFAULT_DECIMALS } from '../constants'
+import { DEFAULT_DECIMALS } from '../constants/common'
 import { Pool, PoolShare } from '../types/schema'
 import { XToken } from '../wrappers'
 import {

@@ -1,5 +1,5 @@
 import { Address, BigDecimal, ByteArray } from '@graphprotocol/graph-ts'
-import { SPTs as disabledSPTs } from '../disabled-tokens'
+import { SPTs as disabledSPTs } from '../constants/disabled-tokens'
 import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
 import { LOG_NEW_POOL } from '../types/Factory/Factory'
 import { Balancer, CrpControllerPoolCount, Pool } from '../types/schema'

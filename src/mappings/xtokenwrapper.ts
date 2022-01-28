@@ -1,9 +1,9 @@
 import { log } from '@graphprotocol/graph-ts'
-import { DEFAULT_DECIMALS } from '../constants'
+import { DEFAULT_DECIMALS } from '../constants/common'
 import {
   SPTs as disabledSPTs,
   xSPTs as disabledXSPTSs,
-} from '../disabled-tokens'
+} from '../constants/disabled-tokens'
 import { Token, XToken } from '../types/schema'
 import { XToken as XTokenAbi } from '../types/templates'
 import { ERC20 } from '../types/XTokenWrapper/ERC20'

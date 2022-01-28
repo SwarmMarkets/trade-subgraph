@@ -1,5 +1,5 @@
 import { Address, BigInt, Bytes, store } from '@graphprotocol/graph-ts'
-import { DEFAULT_DECIMALS } from '../constants'
+import { DEFAULT_DECIMALS } from '../constants/common'
 import {
   ConfigurableRightsPool,
   OwnershipTransferred,
