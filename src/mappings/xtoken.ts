@@ -1,4 +1,5 @@
 import { Address, BigInt, Bytes, log, store } from '@graphprotocol/graph-ts'
+import { DEFAULT_DECIMALS } from '../constants/common'
 import { Pool, PoolShare } from '../types/schema'
 import { XToken } from '../wrappers'
 import {
@@ -7,9 +8,8 @@ import {
   Unpaused,
   XToken as XTokenAbi,
 } from '../types/templates/XToken/XToken'
-import { createPoolShareEntity, tokenToDecimal, ZERO_BD } from './helpers'
-
-const DEFAULT_DECIMALS = 18
+import { createPoolShareEntity, tokenToDecimal } from './helpers'
+import { ZERO_BD } from '../constants/math'
 
 export function handlePaused(event: Paused): void {
   changeXTokenState(event.address, true)

@@ -1,0 +1,18 @@
+name: "Lint PR Title"
+
+on:
+  pull_request:
+    types:
+      - reopened
+      - opened
+      - edited
+      - synchronize
+
+jobs:
+  check-pr-title:
+    name: Check PR Title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: Slashgear/action-check-pr-title@v3.0.0
+        with:
+          regexp: '^SM-[0-9]{1,4}\s\|\s(([a-z]*))(?:\(([\w\$\.\-\* ]*)\))?\:\s(.*)$|^chore(.*): bump.*'

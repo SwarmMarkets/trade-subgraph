@@ -5,8 +5,8 @@ export class Balancer extends SchematicBalancer {
   static safeLoad(id: string): Balancer {
     let factory = SchematicBalancer.load(id)
     if (factory == null) {
-      log.error('Factory not found', [id])
-      throw new Error('Factory not found')
+      log.critical('Factory not found: {}', [id])
+      throw new Error('Factory not found!')
     }
 
     return factory as Balancer

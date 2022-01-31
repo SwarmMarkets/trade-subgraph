@@ -5,8 +5,8 @@ export class Pool extends SchematicPool {
   static safeLoad(id: string): Pool {
     let pool = SchematicPool.load(id)
     if (pool == null) {
-      log.error('Pool not found', [id])
-      throw new Error('Pool not found')
+      log.critical('Pool not found: {}', [id])
+      throw new Error('Pool not found!')
     }
 
     return pool as Pool
