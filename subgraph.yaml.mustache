@@ -1,16 +1,16 @@
 specVersion: 0.0.2
-description: Balancer is a non-custodial portfolio manager, liquidity provider, and price sensor.
-repository: https://github.com/balancer-labs/balancer-subgraph
+description: Swarm Network provides open technology to enable the creation and management of digital assets.
+repository: https://github.com/SwarmMarkets/trade-subgraph
 schema:
-  file: ./schema.graphql
+  file: ./{{ schemaFileName }}
 dataSources:
   - kind: ethereum/contract
     name: Factory
-    network: kovan
+    network: {{ network }}
     source:
-      address: "0xf748A54bB6b9950Fc7D0aB26E27fE5eAb349EDD3"
+      address: "{{ dataSources.factory.address }}"
       abi: Factory
-      startBlock: 23944937
+      startBlock: {{ dataSources.factory.startBlock }}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -30,11 +30,11 @@ dataSources:
           handler: handleNewPool
   - kind: ethereum/contract
     name: XTokenWrapper
-    network: kovan
+    network: {{ network }}
     source:
-      address: "0x3fd5470359A59D0d245a6658dAa875772A014535"
+      address: "{{ dataSources.xTokenWrapper.address }}"
       abi: XTokenWrapper
-      startBlock: 23945005
+      startBlock: {{ dataSources.xTokenWrapper.startBlock }}
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -45,13 +45,44 @@ dataSources:
       abis:
         - name: XTokenWrapper
           file: ./abis/XTokenWrapper.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
         - event: RegisterToken(indexed address,indexed address)
           handler: handleRegisterToken
+{{ #dataSources.dOTCManager }}
+  - kind: ethereum/contract
+    name: dOTC
+    network: rinkeby
+    source:
+      address: "{{ dataSources.dOTCManager.address }}"
+      abi: DOTCManager
+      startBlock: {{ dataSources.dOTCManager.startBlock }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/dOTCManager.ts
+      entities:
+        - Offers
+        - Orders
+      abis:
+        - name: DOTCManager
+          file: ./abis/DOTCManager.json
+      eventHandlers:
+        - event: CreatedOffer(uint256,address,address,address,uint256,uint256,uint8,address,bool)
+          handler: handleNewOffer
+        - event: CreatedOrder(uint256,uint256,uint256,address,uint256)
+          handler: handleNewOrder
+        - event: CompletedOffer(uint256)
+          handler: handleOfferCompleted
+        - event: CancledOffer(uint256,address,uint256)
+          handler: handleCanceledOffer
+{{ /dataSources.dOTCManager }}
 templates:
   - kind: ethereum/contract
     name: Pool
-    network: rinkeby
+    network: {{ network }}
     source:
       abi: Pool
     mapping:
@@ -92,13 +123,15 @@ templates:
         - event: LOG_CALL(indexed bytes4,indexed address,bytes)
           topic0: "0xcf5e7bd300000000000000000000000000000000000000000000000000000000"
           handler: handleUnbind
+        - event: LOG_JOIN(indexed address,indexed address,uint256)
+          handler: handleJoinPool
+        - event: LOG_EXIT(indexed address,indexed address,uint256)
+          handler: handleExitPool
         - event: LOG_SWAP(indexed address,indexed address,indexed address,uint256,uint256)
           handler: handleSwap
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
   - kind: ethereum/contract
     name: CrpController
-    network: rinkeby
+    network: {{ network }}
     source:
       abi: ConfigurableRightsPool
     mapping:
@@ -114,3 +147,27 @@ templates:
       eventHandlers:
         - event: OwnershipTransferred(indexed address,indexed address)
           handler: handleSetCrpController
+  - kind: ethereum/contract
+    name: XToken
+    network: {{ network }}
+    source:
+      abi: XToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/xtoken.ts
+      entities:
+        - XToken
+      abis:
+        - name: XToken
+          file: ./abis/XToken.json
+        - name: GnosisSafe
+          file: ./abis/GnosisSafe.json
+      eventHandlers:
+        - event: Paused(address)
+          handler: handlePaused
+        - event: Unpaused(address)
+          handler: handleUnpaused
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer

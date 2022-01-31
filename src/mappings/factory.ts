@@ -1,17 +1,21 @@
-import { Address, BigInt, BigDecimal, Bytes } from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, ByteArray } from '@graphprotocol/graph-ts'
+import { SPTs as disabledSPTs } from '../constants/disabled-tokens'
+import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
 import { LOG_NEW_POOL } from '../types/Factory/Factory'
-import { Balancer, Pool, CrpControllerPoolCount} from '../types/schema'
-import { Pool as PoolContract, CrpController as CrpControllerContract, CrpController } from '../types/templates'
+import { Balancer, CrpControllerPoolCount, Pool } from '../types/schema'
 import {
-  ZERO_BD,
-  isCrp,
+  CrpController as CrpControllerContract,
+  Pool as PoolContract,
+} from '../types/templates'
+import {
+  getCrpCap,
   getCrpController,
-  getCrpSymbol,
   getCrpName,
   getCrpRights,
-  getCrpCap
+  getCrpSymbol,
+  isCrp,
 } from './helpers'
-import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool';
+import { ZERO_BD, ZERO_BI } from '../constants/math'
 
 export function handleNewPool(event: LOG_NEW_POOL): void {
   let factory = Balancer.load('1')
@@ -24,15 +28,15 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
     factory.finalizedPoolCount = 0
     factory.crpCount = 0
     factory.privateCount = 0
-    factory.txCount = BigInt.fromI32(0)
+    factory.txCount = ZERO_BI
     factory.totalLiquidity = ZERO_BD
     factory.totalSwapVolume = ZERO_BD
     factory.totalSwapFee = ZERO_BD
   }
   let poolId = event.params.pool.toHexString()
 
-  // skip misconfigured pool on mainnet
-  if (poolId == '0x8c4167154accd56797d122d8bcaad3a9432ed4af'){
+  // skip misconfigured pools
+  if (disabledSPTs.includes(poolId)) {
     return
   }
 
@@ -44,11 +48,12 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
     let crp = ConfigurableRightsPool.bind(event.params.caller)
     pool.symbol = getCrpSymbol(crp)
     pool.name = getCrpName(crp)
-    pool.crpController = Address.fromString(getCrpController(crp))
+    let controller = getCrpController(crp)
+    pool.crpController = controller ? Address.fromString(controller) : null
     pool.rights = getCrpRights(crp)
     pool.cap = getCrpCap(crp)
 
-    countCrpController(pool.crpController.toHexString())
+    countCrpController((pool.crpController as ByteArray).toHexString())
 
     // Listen for any future crpController changes.
     CrpControllerContract.create(event.params.caller)
@@ -64,12 +69,12 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
   pool.totalSwapFee = ZERO_BD
   pool.liquidity = ZERO_BD
   pool.createTime = event.block.timestamp.toI32()
-  pool.tokensCount = BigInt.fromI32(0)
-  pool.holdersCount = BigInt.fromI32(0)
-  pool.joinsCount = BigInt.fromI32(0)
-  pool.exitsCount = BigInt.fromI32(0)
-  pool.swapsCount = BigInt.fromI32(0)
-  pool.factoryID = event.address.toHexString()
+  pool.tokensCount = ZERO_BI
+  pool.holdersCount = ZERO_BI
+  pool.joinsCount = ZERO_BI
+  pool.exitsCount = ZERO_BI
+  pool.swapsCount = ZERO_BI
+  pool.factoryID = factory.id
   pool.tokensList = []
   pool.holders = []
   pool.tx = event.transaction.hash
@@ -82,7 +87,7 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
 }
 
 function countCrpController(crpController: string): void {
-  let controllerCount =  CrpControllerPoolCount.load(crpController)
+  let controllerCount = CrpControllerPoolCount.load(crpController)
 
   if (controllerCount == null) {
     controllerCount = new CrpControllerPoolCount(crpController)
@@ -93,5 +98,4 @@ function countCrpController(crpController: string): void {
   }
 
   controllerCount.save()
-
 }

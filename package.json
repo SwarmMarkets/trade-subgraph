@@ -1,23 +1,33 @@
 {
   "name": "trade-subgraph",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
-    "create:local": "graph create swarmmarkets/trade-mainnet --node http://127.0.0.1:8020",
+    "generate:config": "mustache config/$NETWORK.json subgraph.yaml.mustache > subgraph.yaml",
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
-    "deploy": "graph deploy --access-token $ACCESS_TOKEN $GITHUB_USERNAME/$SUBGRAPH_NAME $GRAPH_CONFIG_FILE --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
-    "deploy:local": "graph deploy swarmmarkets/trade-mainnet subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020"
+    "deploy": "graph deploy --access-token $ACCESS_TOKEN $GITHUB_USERNAME/$SUBGRAPH_NAME --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
+    "generate:config:env": "env-cmd yarn generate:config",
+    "deploy:with:env": "env-cmd yarn deploy",
+    "deploy:local": "graph deploy swarmmarkets/trade-mainnet subgraph.yaml --debug --ipfs http://localhost:5001 --node http://127.0.0.1:8020",
+    "create:local": "graph create swarmmarkets/trade-mainnet --node http://127.0.0.1:8020",
+    "lint": "eslint --max-warnings 0 . --ext .ts"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.20.0",
-    "@graphprotocol/graph-ts": "^0.20.1"
+    "@graphprotocol/graph-ts": "^0.20.1",
+    "@typescript-eslint/eslint-plugin": "^5.9.1",
+    "@typescript-eslint/parser": "^5.9.1",
+    "assemblyscript": "^0.19.22",
+    "env-cmd": "^10.1.0",
+    "eslint": "7.31.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "mustache": "^4.2.0",
+    "prettier": "^2.5.1",
+    "typescript": "^4.5.4"
   },
   "dependencies": {
+    "@assemblyscript/loader": "^0.19.22",
     "babel-polyfill": "^6.26.0",
-    "babel-register": "^6.26.0",
-    "keytar": "^5.0.0",
-    "truffle": "^5.1.0",
-    "truffle-contract": "^4.0.5",
-    "truffle-hdwallet-provider": "^1.0.4"
+    "babel-register": "^6.26.0"
   }
 }
