@@ -1,6 +1,6 @@
 {
   "name": "trade-subgraph",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "scripts": {
     "generate:config": "mustache config/$NETWORK.json subgraph.yaml.mustache > subgraph.yaml",
     "codegen": "graph codegen --output-dir src/types/",
