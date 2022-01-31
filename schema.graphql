@@ -151,26 +151,3 @@ type XToken @entity {
   poolTokens: [PoolToken!] @derivedFrom(field: "xToken")
 }
 
-type Offer @entity {
-  id: ID!
-  maker: Bytes! # address of maker
-  tokenIn: Token!
-  tokenOut: Token!
-  amountIn: BigDecimal!
-  amountOut: BigDecimal!
-  price: BigDecimal!
-  offerType: BigInt!
-  specialAddress: Bytes!
-  isCompleted: Boolean!
-  orders: [Order!]! @derivedFrom(field: "offers")
-  cancelled: Boolean!
-  availableAmount: BigDecimal
-}
-
-type Order @entity {
-  id: ID!
-  offers: Offer!
-  amountPaid: BigDecimal!
-  orderedBy: Bytes!
-  amountToReceive: BigDecimal!
-}
