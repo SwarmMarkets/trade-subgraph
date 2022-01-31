@@ -13,5 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: amannn/action-semantic-pull-request@v3.6.0
+        with:
+          subjectPattern: ^SM-[0-9]{1,4}\s\|\s(([a-z]*))(?:\(([\w\$\.\-\* ]*)\))?\:\s(.*)$
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
