@@ -120,8 +120,8 @@ type TokenPrice @entity {
   name: String!
   decimals: Int!
   price: BigDecimal!
-  poolLiquidity: BigDecimal!
-  poolTokenId: String!
+  poolLiquidity: BigDecimal
+  poolTokenId: String
 }
 
 enum SwapType {
