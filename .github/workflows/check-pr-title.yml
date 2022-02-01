@@ -15,4 +15,4 @@ jobs:
     steps:
       - uses: Slashgear/action-check-pr-title@v3.0.0
         with:
-          regexp: '^SM-[0-9]{1,4}\s\|\s(([a-z]*))(?:\(([\w\$\.\-\* ]*)\))?\:\s(.*)$'
+          regexp: '^SM-[0-9]{1,4}\s\|\s(([a-z]*))(?:\(([\w\$\.\-\* ]*)\))?\:\s(.*)$|^chore(.*): bump.*'
