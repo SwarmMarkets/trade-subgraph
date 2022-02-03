@@ -1,6 +1,6 @@
 import { BigInt } from '@graphprotocol/graph-ts'
 import {
-  CancledOffer,
+  CanceledOffer,
   CompletedOffer,
   CreatedOffer,
   CreatedOrder,
@@ -25,7 +25,7 @@ export function handleNewOffer(event: CreatedOffer): void {
   offer.tokenOut = tokenOut.id
   offer.amountOut = bigIntToDecimal(event.params.amountOut, tokenOut.decimals)
 
-  if (offer.amountOut.notEqual(ZERO_BD) && offer.amountIn.notEqual(ZERO_BD)) {
+  if (offer.amountOut.gt(ZERO_BD) && offer.amountIn.gt(ZERO_BD)) {
     offer.price = offer.amountOut.div(offer.amountIn)
   } else {
     offer.price = ZERO_BD
@@ -34,6 +34,10 @@ export function handleNewOffer(event: CreatedOffer): void {
   offer.offerType = BigInt.fromI32(event.params.offerType)
   offer.specialAddress = event.params.specialAddress
   offer.isCompleted = event.params.isComplete
+  offer.availableAmount = bigIntToDecimal(
+    event.params.amountOut,
+    tokenOut.decimals,
+  )
   offer.cancelled = false
   offer.save()
 }
@@ -47,10 +51,11 @@ export function handleNewOrder(event: CreatedOrder): void {
 
   if (offer != null) {
     let tokenPaid = Token.safeLoad(offer.tokenOut)
-    order.amountPaid = bigIntToDecimal(
+    let amountPaid = bigIntToDecimal(
       event.params.amountPaid,
       tokenPaid.decimals,
     )
+    order.amountPaid = amountPaid
 
     let tokenToReceive = Token.safeLoad(offer.tokenIn)
     order.amountToReceive = bigIntToDecimal(
@@ -59,13 +64,16 @@ export function handleNewOrder(event: CreatedOrder): void {
     )
 
     order.offers = offer.id
+    offer.availableAmount = offer.availableAmount.gt(amountPaid)
+      ? offer.availableAmount.minus(amountPaid)
+      : ZERO_BD
+    offer.save()
   } else {
     order.amountPaid = ZERO_BD
     order.amountToReceive = ZERO_BD
   }
 
   order.orderedBy = event.params.orderedBy
-
   order.save()
 }
 
@@ -77,7 +85,7 @@ export function handleOfferCompleted(event: CompletedOffer): void {
   }
 }
 
-export function handleCanceledOffer(event: CancledOffer): void {
+export function handleCanceledOffer(event: CanceledOffer): void {
   let offer = Offer.load(event.params.offerId.toHex())
   if (offer != null) {
     offer.cancelled = true
