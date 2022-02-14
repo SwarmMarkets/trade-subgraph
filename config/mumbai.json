@@ -4,11 +4,11 @@
   "dataSources": {
     "factory": {
       "address": "0xd290e0F094D860B1F5860e9ede89b6FA50C2543F",
-      "startBlock": 19000000
+      "startBlock": 24796924
     },
     "xTokenWrapper": {
       "address": "0x9ED7C0Cd38a4A15A34A4093Fb1038ff867C9476B",
-      "startBlock": 19000000
+      "startBlock": 24796924
     }
   }
 }
