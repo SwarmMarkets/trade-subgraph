@@ -5,7 +5,7 @@ let USDCByNetwork: ValueByNetwork<string> = {
   mainnet: '0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48',
   rinkeby: '0x775badfdcc4478ba25d55f076b781fd66cdaf408',
   matic: '0x2791bca1f2de4661ed88a30c99a7a9449aa84174',
-  mumbai: '0x234201e48499b104321cb482beb5a7ae5f3d9627',
+  mumbai: '0x5fd6a096a23e95692e37ec7583011863a63214aa',
 }
 
 let DAIByNetwork: ValueByNetwork<string> = {
