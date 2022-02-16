@@ -1,10 +1,18 @@
 import { Address, BigInt, Bytes, store } from '@graphprotocol/graph-ts'
+import { DEFAULT_DECIMALS } from '../constants/common'
 import {
   ConfigurableRightsPool,
   OwnershipTransferred,
 } from '../types/Factory/ConfigurableRightsPool'
-import { Pool, PoolToken, XToken, Balancer, Token } from '../wrappers'
-import { Swap, TokenPrice } from '../types/schema'
+import {
+  Pool,
+  PoolToken,
+  XToken,
+  Balancer,
+  Token,
+  TokenPrice,
+} from '../wrappers'
+import { Swap } from '../types/schema'
 import {
   GulpCall,
   LOG_CALL,
@@ -22,8 +30,8 @@ import {
   saveTransaction,
   tokenToDecimal,
   updatePoolLiquidity,
-  ZERO_BD,
 } from './helpers'
+import { BI_1, ZERO_BD } from '../constants/math'
 
 /************************************
  ********** Pool Controls ***********
@@ -32,7 +40,10 @@ import {
 export function handleSetSwapFee(event: LOG_CALL): void {
   let poolId = event.address.toHex()
   let pool = Pool.safeLoad(poolId)
-  pool.swapFee = hexToDecimal(event.params.data.toHexString().slice(-40), 18)
+  pool.swapFee = hexToDecimal(
+    event.params.data.toHexString().slice(-40),
+    DEFAULT_DECIMALS,
+  )
   pool.save()
 
   saveTransaction(event, 'setSwapFee')
@@ -109,38 +120,35 @@ export function handleFinalize(event: LOG_CALL): void {
 export function handleRebind(event: LOG_CALL): void {
   let poolId = event.address.toHex()
   let pool = Pool.safeLoad(poolId)
-  let tokenBytes = Bytes.fromHexString(
+
+  // xToken to rebind
+  let targetXToken = Bytes.fromHexString(
     event.params.data.toHexString().slice(34, 74),
   ) as Bytes
+
   let tokensList = pool.tokensList || []
-  if (tokensList.indexOf(tokenBytes) == -1) {
-    tokensList.push(tokenBytes)
+  if (tokensList.indexOf(targetXToken) == -1) {
+    tokensList.push(targetXToken)
   }
   pool.tokensList = tokensList
   pool.tokensCount = BigInt.fromI32(tokensList.length)
 
-  let address = Address.fromString(
-    event.params.data.toHexString().slice(34, 74),
-  )
-  let denormWeight = hexToDecimal(
+  // new denorm weight
+  let newDenormWeight = hexToDecimal(
     event.params.data.toHexString().slice(138),
-    18,
+    DEFAULT_DECIMALS,
   )
 
-  let poolTokenId = poolId.concat('-').concat(address.toHexString())
+  let poolTokenId = poolId.concat('-').concat(targetXToken.toHexString())
   let poolToken = PoolToken.load(poolTokenId)
 
   if (poolToken == null) {
-    createPoolTokenEntity(poolTokenId, poolId, address.toHexString())
+    createPoolTokenEntity(poolTokenId, poolId, targetXToken.toHexString())
     poolToken = PoolToken.safeLoad(poolTokenId)
-    pool.totalWeight = pool.totalWeight.plus(denormWeight)
+    pool.totalWeight = pool.totalWeight.plus(newDenormWeight)
   } else {
     let oldWeight = poolToken.denormWeight
-    if (denormWeight > oldWeight) {
-      pool.totalWeight = pool.totalWeight.plus(denormWeight.minus(oldWeight))
-    } else {
-      pool.totalWeight = pool.totalWeight.minus(oldWeight.minus(denormWeight))
-    }
+    pool.totalWeight = pool.totalWeight.minus(oldWeight).plus(newDenormWeight)
   }
 
   let balance = hexToDecimal(
@@ -149,7 +157,7 @@ export function handleRebind(event: LOG_CALL): void {
   )
 
   poolToken.balance = balance
-  poolToken.denormWeight = denormWeight
+  poolToken.denormWeight = newDenormWeight
   poolToken.save()
 
   if (balance.equals(ZERO_BD)) {
@@ -216,7 +224,7 @@ export function handleJoinPool(event: LOG_JOIN): void {
   let poolId = event.address.toHex()
   let pool = Pool.safeLoad(poolId)
 
-  pool.joinsCount = pool.joinsCount.plus(BigInt.fromI32(1))
+  pool.joinsCount = pool.joinsCount.plus(BI_1)
   pool.save()
 
   let address = event.params.tokenIn.toHex()
@@ -250,7 +258,7 @@ export function handleExitPool(event: LOG_EXIT): void {
   poolToken.save()
 
   let pool = Pool.safeLoad(poolId)
-  pool.exitsCount = pool.exitsCount.plus(BigInt.fromI32(1))
+  pool.exitsCount = pool.exitsCount.plus(BI_1)
   if (newAmount.equals(ZERO_BD)) {
     decrPoolCount(pool.active, pool.finalized, pool.crp)
     pool.active = false
@@ -268,6 +276,7 @@ export function handleExitPool(event: LOG_EXIT): void {
 export function handleSwap(event: LOG_SWAP): void {
   let poolId = event.address.toHex()
 
+  // Update poolTokenIn balance
   let xTokenIn = event.params.tokenIn.toHex()
   let tokenIn = XToken.safeLoad(xTokenIn).token
   let poolTokenInId = poolId.concat('-').concat(xTokenIn.toString())
@@ -280,6 +289,7 @@ export function handleSwap(event: LOG_SWAP): void {
   poolTokenIn.balance = newAmountIn
   poolTokenIn.save()
 
+  // Update poolTokenOut balance
   let xTokenOut = event.params.tokenOut.toHex()
   let tokenOut = XToken.safeLoad(xTokenOut).token
   let poolTokenOutId = poolId.concat('-').concat(xTokenOut.toString())
@@ -304,29 +314,8 @@ export function handleSwap(event: LOG_SWAP): void {
   }
 
   let pool = Pool.safeLoad(poolId)
-  let tokensList: Array<Bytes> = pool.tokensList
-  let tokenOutPriceValue = ZERO_BD
-  let tokenOutPrice = TokenPrice.load(tokenOut)
-
-  if (tokenOutPrice != null) {
-    tokenOutPriceValue = tokenOutPrice.price
-  } else {
-    for (let i: i32 = 0; i < tokensList.length; i++) {
-      let tokenPriceId = tokensList[i].toHexString()
-      if (!tokenOutPriceValue.gt(ZERO_BD) && tokenPriceId !== tokenOut) {
-        let tokenPrice = TokenPrice.load(tokenPriceId)
-        if (tokenPrice !== null && tokenPrice.price.gt(ZERO_BD)) {
-          let poolTokenId = poolId.concat('-').concat(tokenPriceId)
-          let poolToken = PoolToken.safeLoad(poolTokenId)
-          tokenOutPriceValue = tokenPrice.price
-            .times(poolToken.balance)
-            .div(poolToken.denormWeight)
-            .times(poolTokenOut.denormWeight)
-            .div(poolTokenOut.balance)
-        }
-      }
-    }
-  }
+  let tokenOutPrice = TokenPrice.safeLoad(tokenOut)
+  let tokenOutPriceValue = tokenOutPrice.price
 
   let totalSwapVolume = pool.totalSwapVolume
   let totalSwapFee = pool.totalSwapFee
@@ -348,8 +337,8 @@ export function handleSwap(event: LOG_SWAP): void {
     pool.totalSwapFee = totalSwapFee
   }
 
-  pool.swapsCount = pool.swapsCount.plus(BigInt.fromI32(1))
-  factory.txCount = factory.txCount.plus(BigInt.fromI32(1))
+  pool.swapsCount = pool.swapsCount.plus(BI_1)
+  factory.txCount = factory.txCount.plus(BI_1)
   factory.save()
 
   if (newAmountIn.equals(ZERO_BD) || newAmountOut.equals(ZERO_BD)) {

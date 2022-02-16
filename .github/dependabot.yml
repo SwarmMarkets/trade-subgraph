@@ -1,0 +1,14 @@
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+      # Check for updates at 9am UTC
+      time: "09:00"
+    target-branch: "develop"
+    labels:
+      - "dependencies"
+    reviewers:
+      - "ElvisKrop"
+      - "yusufseyrek"
