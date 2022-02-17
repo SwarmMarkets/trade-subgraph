@@ -39,6 +39,5 @@ export function addNewERC1155Token(event: RegisterERC1155Token): void {
   if (erc1155Token == null) {
     erc1155Token = new ERC1155Token(event.params.token.toHexString())
   }
-  erc1155Token.token = event.params.token
   erc1155Token.save()
 }

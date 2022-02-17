@@ -205,5 +205,4 @@ type ERC20Token @entity {
 
 type ERC1155Token @entity {
   id: ID!
-  token: Bytes!
 }
