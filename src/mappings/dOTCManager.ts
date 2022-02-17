@@ -67,9 +67,22 @@ export function handleNewOrder(event: CreatedOrder): void {
     )
 
     order.offers = offer.id
+    offer.availableAmount =
+      offer.availableAmount &&
+      offer.availableAmount.minus(
+        bigIntToDecimal(event.params.amountPaid, tokenPaid.decimals),
+      )
+    offer.availableAmount = offer.availableAmount.gt(amountPaid)
+      ? offer.availableAmount.minus(amountPaid)
+      : ZERO_BD
+    offer.save()
+  } else {
+    order.amountPaid = ZERO_BD
+    order.amountToReceive = ZERO_BD
   }
 
   order.orderedBy = event.params.orderedBy
+  order.save()
 }
 
 export function handleOfferCompleted(event: CompletedOffer): void {
