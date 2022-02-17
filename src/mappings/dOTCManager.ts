@@ -67,11 +67,6 @@ export function handleNewOrder(event: CreatedOrder): void {
     )
 
     order.offers = offer.id
-    offer.availableAmount =
-      offer.availableAmount &&
-      offer.availableAmount.minus(
-        bigIntToDecimal(event.params.amountPaid, tokenPaid.decimals),
-      )
     offer.availableAmount = offer.availableAmount.gt(amountPaid)
       ? offer.availableAmount.minus(amountPaid)
       : ZERO_BD
