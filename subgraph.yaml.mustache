@@ -53,7 +53,7 @@ dataSources:
 {{ #dataSources.dOTCManager }}
   - kind: ethereum/contract
     name: dOTC
-    network: rinkeby
+    network: {{ network }}
     source:
       address: "{{ dataSources.dOTCManager.address }}"
       abi: DOTCManager
@@ -87,6 +87,31 @@ dataSources:
         - event: CompletedNftOffer(indexed uint256)
           handler: handleNftOfferCompleted
 {{ /dataSources.dOTCManager }}
+{{ #dataSources.dOTCListedTokens }}
+  - kind: ethereum/contract
+    name: dOTCListedTokens
+    network: {{ network }}
+    source:
+      address: "{{ dataSources.dOTCListedTokens.address }}"
+      abi: TokenListManager
+      startBlock: {{ dataSources.dOTCListedTokens.startBlock }}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/dOTCListedToken.ts
+      entities:
+        - ERC20Tokens
+        - ERC1155tokens
+      abis:
+        - name: TokenListManager
+          file: ./abis/TokenListManager.json
+      eventHandlers:
+        - event: RegisterERC20Token(indexed address)
+          handler: addNewERC20Token
+        - event: RegisterERC1155Token(indexed address)
+          handler: addNewERC1155Token
+{{ /dataSources.dOTCListedTokens }}
 templates:
   - kind: ethereum/contract
     name: Pool

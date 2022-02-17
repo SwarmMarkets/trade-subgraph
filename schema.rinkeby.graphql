@@ -195,3 +195,13 @@ type NftOffer @entity {
   isCompleted: Boolean!
   orders: [NftOrder!]! @derivedFrom(field: "offers")
 }
+
+type ERC20Token @entity {
+  id: ID!
+  token: Token!
+}
+
+type ERC1155token @entity {
+  id: ID!
+  token: Bytes!
+}
