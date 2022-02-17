@@ -6,7 +6,12 @@ on:
 
 jobs:
   build:
+    name: Generate the code and lint for ${{ matrix.network }}
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        network: [ rinkeby, mumbai, mainnet, matic ]
+
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
@@ -14,17 +19,26 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v2
         with:
-          node-version: 12.22.8
-          cache: 'yarn'
+          node-version: 14
 
-      - name: Install deps (with cache)
-        uses: bahmutov/npm-install@v1.6.0
+      - name: Get yarn cache directory path
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn cache dir)"
+
+      - uses: actions/cache@v2
+        id: yarn-cache # use this to check for `cache-hit` (`steps.yarn-cache.outputs.cache-hit != 'true'`)
         with:
-          install-command: yarn --frozen-lockfile --silent
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ matrix.network }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ matrix.network }}-yarn-
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --silent
 
       - name: Generate configuration file
         env:
-          NETWORK: mainnet
+          NETWORK: ${{ matrix.network }}
         run: yarn generate:config
 
       - name: Code Generation

@@ -6,21 +6,25 @@ on:
 
 jobs:
   deploy-stable-mainnet:
+    name: Ethereum Mainnet
     uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.mainnet.yml@main
     secrets:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
   deploy-stable-rinkeby:
+    name: Ethereum Rinkeby
     uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.rinkeby.yml@main
     secrets:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
   deploy-stable-polygon:
+    name: Polygon Matic
     uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.polygon.yml@main
     secrets:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
   deploy-stable-mumbai:
+    name: Polygon Mumbai
     uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.mumbai.yml@main
     secrets:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
