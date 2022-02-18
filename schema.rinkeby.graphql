@@ -205,4 +205,6 @@ type ERC20Token @entity {
 
 type ERC1155Token @entity {
   id: ID!
+  name: String!
+  symbol: String!
 }
