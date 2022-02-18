@@ -108,6 +108,8 @@ dataSources:
           file: ./abis/TokenListManager.json
         - name: ERC20
           file: ./abis/ERC20.json
+        - name: ERC1155
+          file: ./abis/ERC1155.json
       eventHandlers:
         - event: RegisterERC20Token(indexed address)
           handler: addNewERC20Token
