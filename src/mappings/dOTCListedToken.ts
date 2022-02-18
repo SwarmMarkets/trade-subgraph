@@ -1,12 +1,13 @@
-import { DEFAULT_DECIMALS } from '../constants/common'
-import { ERC20 } from '../types/dOTCListedTokens/ERC20'
-import {
-  RegisterERC20Token,
-  RegisterERC1155Token,
-} from './../types/dOTCListedTokens/TokenListManager'
-import { ERC20Token, ERC1155Token } from '../types/schema'
-import { Token } from './../wrappers/token'
 import { Address } from '@graphprotocol/graph-ts'
+import { DEFAULT_DECIMALS } from '../constants/common'
+import { ERC1155 } from '../types/dOTCListedTokens/ERC1155'
+import { ERC20 } from '../types/dOTCListedTokens/ERC20'
+import { ERC1155Token, ERC20Token } from '../types/schema'
+import {
+  RegisterERC1155Token,
+  RegisterERC20Token,
+} from './../types/dOTCListedTokens/TokenListManager'
+import { Token } from './../wrappers/token'
 
 export function addNewERC20Token(event: RegisterERC20Token): void {
   let erc20Token = ERC20Token.load(event.params.token.toHexString())
@@ -38,6 +39,11 @@ export function addNewERC1155Token(event: RegisterERC1155Token): void {
   let erc1155Token = ERC1155Token.load(event.params.token.toHexString())
   if (erc1155Token == null) {
     erc1155Token = new ERC1155Token(event.params.token.toHexString())
+    let erc1155 = ERC1155.bind(Address.fromString(erc1155Token.id))
+    let tokenName = erc1155.try_name()
+    let tokenSymbol = erc1155.try_symbol()
+    erc1155Token.name = !tokenName.reverted ? tokenName.value : ''
+    erc1155Token.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ''
   }
   erc1155Token.save()
 }
