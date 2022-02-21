@@ -138,7 +138,7 @@ export function handleNewNftOrder(event: CreatedNftOrder): void {
 }
 
 export function handleNftOfferCompleted(event: CompletedNftOffer): void {
-  let offer = Offer.load(event.params.offerId.toHex())
+  let offer = NftOffer.load(event.params.offerId.toHex())
   if (offer != null) {
     offer.isCompleted = true
     offer.save()
