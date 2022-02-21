@@ -175,17 +175,10 @@ type Order @entity {
   amountToReceive: BigDecimal!
 }
 
-type NftOrder @entity {
-  id: ID!
-  amountPaid: BigDecimal!
-  orderedBy: Bytes!
-  offers: NftOffer!
-}
-
 type NftOffer @entity {
   id: ID!
   maker: Bytes! # address of maker
-  nftAddress: Bytes!
+  nftAddress: ERC1155Token!
   tokenOut: Token!
   offerPrice: BigDecimal!
   nftIds: [BigInt!]!
@@ -196,16 +189,15 @@ type NftOffer @entity {
   orders: [NftOrder!]! @derivedFrom(field: "offers")
 }
 
-type ERC20Token @entity {
+type NftOrder @entity {
   id: ID!
-<<<<<<< HEAD
-  token: Token!
+  amountPaid: BigDecimal!
+  orderedBy: Bytes!
+  offers: NftOffer!
 }
 
-type ERC1155token @entity {
+type ERC20Token @entity {
   id: ID!
-  token: Bytes!
-=======
   name: String!
   symbol: String!
   decimals: Int!
@@ -215,5 +207,4 @@ type ERC1155Token @entity {
   id: ID!
   name: String!
   symbol: String!
->>>>>>> d35029a7787eada34fa6bfd307cfba9e58bbec03
 }

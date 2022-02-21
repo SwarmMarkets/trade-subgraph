@@ -102,7 +102,7 @@ export function handleNewNftOffer(event: CreatedNftOffer): void {
     offer = new NftOffer(event.params.nftOfferId.toHex())
   }
   offer.maker = event.transaction.from
-  offer.nftAddress = event.params.nftAddress
+  offer.nftAddress = event.params.nftAddress.toHexString()
   offer.nftIds = event.params.nftIds
   offer.nftAmounts = event.params.nftAmounts
   offer.expiresAt = event.params.expiresAt
