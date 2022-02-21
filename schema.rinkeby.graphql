@@ -198,10 +198,22 @@ type NftOffer @entity {
 
 type ERC20Token @entity {
   id: ID!
+<<<<<<< HEAD
   token: Token!
 }
 
 type ERC1155token @entity {
   id: ID!
   token: Bytes!
+=======
+  name: String!
+  symbol: String!
+  decimals: Int!
+}
+
+type ERC1155Token @entity {
+  id: ID!
+  name: String!
+  symbol: String!
+>>>>>>> d35029a7787eada34fa6bfd307cfba9e58bbec03
 }

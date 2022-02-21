@@ -1,25 +1,49 @@
+import { Address } from '@graphprotocol/graph-ts'
+import { DEFAULT_DECIMALS } from '../constants/common'
+import { ERC1155 } from '../types/dOTCListedTokens/ERC1155'
+import { ERC20 } from '../types/dOTCListedTokens/ERC20'
+import { ERC1155Token, ERC20Token } from '../types/schema'
 import {
-  RegisterERC20Token,
   RegisterERC1155Token,
+  RegisterERC20Token,
 } from './../types/dOTCListedTokens/TokenListManager'
-import { ERC20Token, ERC1155token } from '../types/schema'
 import { Token } from './../wrappers/token'
 
 export function addNewERC20Token(event: RegisterERC20Token): void {
-  let erc20Token = ERC20Token.load(event.transaction.index.toHex())
+  let erc20Token = ERC20Token.load(event.params.token.toHexString())
   if (erc20Token == null) {
-    erc20Token = new ERC20Token(event.transaction.index.toHex())
+    erc20Token = new ERC20Token(event.params.token.toHexString())
   }
-  let newToken = Token.safeLoad(event.params.token.toHexString())
-  erc20Token.token = newToken.id
+
+  let newToken = Token.load(event.params.token.toHexString())
+  if (newToken == null) {
+    let erc20 = ERC20.bind(Address.fromString(erc20Token.id))
+    let tokenDecimals = erc20.try_decimals()
+    let tokenName = erc20.try_name()
+    let tokenSymbol = erc20.try_symbol()
+    erc20Token.decimals = !tokenDecimals.reverted
+      ? tokenDecimals.value
+      : DEFAULT_DECIMALS
+    erc20Token.name = !tokenName.reverted ? tokenName.value : ''
+    erc20Token.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ''
+  } else {
+    erc20Token.name = newToken.name
+    erc20Token.symbol = newToken.symbol
+    erc20Token.decimals = newToken.decimals
+  }
+
   erc20Token.save()
 }
 
 export function addNewERC1155Token(event: RegisterERC1155Token): void {
-  let erc1155Token = ERC1155token.load(event.transaction.index.toHex())
+  let erc1155Token = ERC1155Token.load(event.params.token.toHexString())
   if (erc1155Token == null) {
-    erc1155Token = new ERC1155token(event.transaction.index.toHex())
+    erc1155Token = new ERC1155Token(event.params.token.toHexString())
+    let erc1155 = ERC1155.bind(Address.fromString(erc1155Token.id))
+    let tokenName = erc1155.try_name()
+    let tokenSymbol = erc1155.try_symbol()
+    erc1155Token.name = !tokenName.reverted ? tokenName.value : ''
+    erc1155Token.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ''
   }
-  erc1155Token.token = event.params.token
   erc1155Token.save()
 }
