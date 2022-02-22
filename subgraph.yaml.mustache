@@ -83,7 +83,7 @@ dataSources:
         - event: CreatedNftOffer(indexed uint256,address,address,uint256,uint256[],uint256[],address,uint256)
           handler: handleNewNftOffer
         - event: CreatedNftOrder(indexed uint256,uint256,uint256,address)
-          handler: handleNewOrder
+          handler: handleNewNftOrder
         - event: CompletedNftOffer(indexed uint256)
           handler: handleNftOfferCompleted
 {{ /dataSources.dOTCManager }}

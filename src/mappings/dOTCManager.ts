@@ -102,7 +102,7 @@ export function handleNewNftOffer(event: CreatedNftOffer): void {
     offer = new NftOffer(event.params.nftOfferId.toHex())
   }
   offer.maker = event.transaction.from
-  offer.nftAddress = event.params.nftAddress
+  offer.nft = event.params.nftAddress.toHexString()
   offer.nftIds = event.params.nftIds
   offer.nftAmounts = event.params.nftAmounts
   offer.expiresAt = event.params.expiresAt
@@ -138,7 +138,7 @@ export function handleNewNftOrder(event: CreatedNftOrder): void {
 }
 
 export function handleNftOfferCompleted(event: CompletedNftOffer): void {
-  let offer = Offer.load(event.params.offerId.toHex())
+  let offer = NftOffer.load(event.params.offerId.toHex())
   if (offer != null) {
     offer.isCompleted = true
     offer.save()
