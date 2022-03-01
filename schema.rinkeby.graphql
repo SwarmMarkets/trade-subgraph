@@ -41,7 +41,7 @@ type Pool @entity {
   tokens: [PoolToken!] @derivedFrom(field: "poolId")
   shares: [PoolShare!] @derivedFrom(field: "poolId")
   holders: [Bytes!]! # Temp workaround until graph supports filtering on derived field
-  createTime: Int! # Block time pool was created
+  createTime: Int! # Block time pool was createdAt: Int!
   tokensCount: BigInt! # Number of tokens in the pool
   holdersCount: BigInt! # Number of addresses holding a positive balance of BPT
   joinsCount: BigInt! # liquidity has been added
@@ -165,6 +165,8 @@ type Offer @entity {
   orders: [Order!]! @derivedFrom(field: "offers")
   cancelled: Boolean!
   availableAmount: BigDecimal!
+  expiresAt: BigInt!
+  createdAt: BigInt!
 }
 
 type Order @entity {
@@ -173,12 +175,13 @@ type Order @entity {
   amountPaid: BigDecimal!
   orderedBy: Bytes!
   amountToReceive: BigDecimal!
+  createdAt: BigInt!
 }
 
 type NftOffer @entity {
   id: ID!
   maker: Bytes! # address of maker
-  nftAddress: ERC1155Token!
+  nft: ERC1155Token!
   tokenOut: Token!
   offerPrice: BigDecimal!
   nftIds: [BigInt!]!
@@ -187,6 +190,7 @@ type NftOffer @entity {
   specialAddress: Bytes!
   isCompleted: Boolean!
   orders: [NftOrder!]! @derivedFrom(field: "offers")
+  createdAt: BigInt!
 }
 
 type NftOrder @entity {
@@ -194,6 +198,7 @@ type NftOrder @entity {
   amountPaid: BigDecimal!
   orderedBy: Bytes!
   offers: NftOffer!
+  createdAt: BigInt!
 }
 
 type ERC20Token @entity {
