@@ -42,6 +42,8 @@ export function handleNewOffer(event: CreatedOffer): void {
     tokenOut.decimals,
   )
   offer.cancelled = false
+  offer.expiresAt = event.params.expiryTime
+  offer.createdAt = event.block.timestamp
   offer.save()
 }
 
@@ -77,6 +79,7 @@ export function handleNewOrder(event: CreatedOrder): void {
   }
 
   order.orderedBy = event.params.orderedBy
+  order.createdAt = event.block.timestamp
   order.save()
 }
 
@@ -112,6 +115,7 @@ export function handleNewNftOffer(event: CreatedNftOffer): void {
 
   offer.specialAddress = event.params.specialAddress
   offer.isCompleted = false
+  offer.createdAt = event.block.timestamp
   offer.save()
 }
 
@@ -134,6 +138,7 @@ export function handleNewNftOrder(event: CreatedNftOrder): void {
   }
 
   order.orderedBy = event.params.taker
+  order.createdAt = event.block.timestamp
   order.save()
 }
 
