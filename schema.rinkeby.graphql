@@ -191,6 +191,7 @@ type NftOffer @entity {
   isCompleted: Boolean!
   orders: [NftOrder!]! @derivedFrom(field: "offers")
   createdAt: BigInt!
+  cancelled: Boolean!
 }
 
 type NftOrder @entity {

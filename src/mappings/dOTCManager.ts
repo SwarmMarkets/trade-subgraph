@@ -7,6 +7,9 @@ import {
   CreatedNftOffer,
   CreatedNftOrder,
   CompletedNftOffer,
+  CanceledNftOffer,
+  TokenOfferUpdated,
+  NftOfferUpdated,
 } from '../types/dOTC/DOTCManager'
 import { Offer, Order, NftOffer, NftOrder } from '../types/schema'
 import { bigIntToDecimal } from './helpers'
@@ -115,6 +118,7 @@ export function handleNewNftOffer(event: CreatedNftOffer): void {
 
   offer.specialAddress = event.params.specialAddress
   offer.isCompleted = false
+  offer.cancelled = false
   offer.createdAt = event.block.timestamp
   offer.save()
 }
@@ -146,6 +150,32 @@ export function handleNftOfferCompleted(event: CompletedNftOffer): void {
   let offer = NftOffer.load(event.params.offerId.toHex())
   if (offer != null) {
     offer.isCompleted = true
+    offer.save()
+  }
+}
+
+export function handleCanceledNftOffer(event: CanceledNftOffer): void {
+  let offer = NftOffer.load(event.params.offerId.toHex())
+  if (offer != null) {
+    offer.cancelled = true
+    offer.save()
+  }
+}
+
+export function handleTokenOfferUpdated(event: TokenOfferUpdated): void {
+  let offer = Offer.load(event.params.offerId.toHex())
+  if (offer != null) {
+    let tokenOut = Token.safeLoad(offer.tokenOut)
+    offer.amountOut = bigIntToDecimal(event.params.newOffer, tokenOut.decimals)
+    offer.save()
+  }
+}
+
+export function handleNftOfferUpdated(event: NftOfferUpdated): void {
+  let offer = NftOffer.load(event.params.offerId.toHex())
+  if (offer != null) {
+    let tokenOut = Token.safeLoad(offer.tokenOut)
+    offer.offerPrice = bigIntToDecimal(event.params.newOffer, tokenOut.decimals)
     offer.save()
   }
 }
