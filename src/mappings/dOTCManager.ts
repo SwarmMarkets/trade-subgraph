@@ -118,7 +118,6 @@ export function handleNewNftOffer(event: CreatedNftOffer): void {
 
   offer.specialAddress = event.params.specialAddress
   offer.isCompleted = false
-  offer.cancelled = false
   offer.createdAt = event.block.timestamp
   offer.save()
 }
