@@ -166,6 +166,11 @@ export function handleTokenOfferUpdated(event: TokenOfferUpdated): void {
   if (offer != null) {
     let tokenOut = Token.safeLoad(offer.tokenOut)
     offer.amountOut = bigIntToDecimal(event.params.newOffer, tokenOut.decimals)
+    if (offer.amountOut.gt(ZERO_BD) && offer.amountIn.gt(ZERO_BD)) {
+      offer.price = offer.amountOut.div(offer.amountIn)
+    } else {
+      offer.price = ZERO_BD
+    }
     offer.save()
   }
 }
