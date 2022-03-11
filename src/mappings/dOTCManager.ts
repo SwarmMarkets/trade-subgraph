@@ -41,8 +41,8 @@ export function handleNewOffer(event: CreatedOffer): void {
   offer.specialAddress = event.params.specialAddress
   offer.isCompleted = event.params.isComplete
   offer.availableAmount = bigIntToDecimal(
-    event.params.amountOut,
-    tokenOut.decimals,
+    event.params.amountIn,
+    tokenIn.decimals,
   )
   offer.cancelled = false
   offer.expiresAt = event.params.expiryTime
@@ -59,21 +59,21 @@ export function handleNewOrder(event: CreatedOrder): void {
 
   if (offer != null) {
     let tokenPaid = Token.safeLoad(offer.tokenOut)
-    let amountPaid = bigIntToDecimal(
+    order.amountPaid = bigIntToDecimal(
       event.params.amountPaid,
       tokenPaid.decimals,
     )
-    order.amountPaid = amountPaid
 
     let tokenToReceive = Token.safeLoad(offer.tokenIn)
-    order.amountToReceive = bigIntToDecimal(
+    let amountToReceive = bigIntToDecimal(
       event.params.amountToReceive,
       tokenToReceive.decimals,
     )
+    order.amountToReceive = amountToReceive
 
     order.offers = offer.id
-    offer.availableAmount = offer.availableAmount.gt(amountPaid)
-      ? offer.availableAmount.minus(amountPaid)
+    offer.availableAmount = offer.availableAmount.gt(amountToReceive)
+      ? offer.availableAmount.minus(amountToReceive)
       : ZERO_BD
     offer.save()
   } else {
