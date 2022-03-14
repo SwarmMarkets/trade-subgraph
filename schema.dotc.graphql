@@ -160,7 +160,8 @@ type Offer @entity {
   amountOut: BigDecimal!
   price: BigDecimal!
   offerType: BigInt!
-  specialAddress: Bytes!
+  isPrivate: Boolean!
+  specialAddress: Bytes
   isCompleted: Boolean!
   orders: [Order!]! @derivedFrom(field: "offers")
   cancelled: Boolean!
@@ -187,7 +188,8 @@ type NftOffer @entity {
   nftIds: [BigInt!]!
   nftAmounts: [BigInt!]!
   expiresAt: BigInt!
-  specialAddress: Bytes!
+  isPrivate: Boolean!
+  specialAddress: Bytes
   isCompleted: Boolean!
   orders: [NftOrder!]! @derivedFrom(field: "offers")
   createdAt: BigInt!
