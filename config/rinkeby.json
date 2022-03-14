@@ -1,6 +1,6 @@
 {
   "network": "rinkeby",
-  "schemaFileName": "schema.rinkeby.graphql",
+  "schemaFileName": "schema.dotc.graphql",
   "dataSources": {
     "factory": {
       "address": "0xc7D87c0B11288de9fD627e9383f63C953e2FdD72",

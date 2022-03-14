@@ -1,6 +1,6 @@
 {
   "network": "mumbai",
-  "schemaFileName": "schema.graphql",
+  "schemaFileName": "schema.dotc.graphql",
   "dataSources": {
     "factory": {
       "address": "0xd290e0F094D860B1F5860e9ede89b6FA50C2543F",
@@ -9,6 +9,14 @@
     "xTokenWrapper": {
       "address": "0x9ED7C0Cd38a4A15A34A4093Fb1038ff867C9476B",
       "startBlock": 24796924
+    },
+    "dOTCManager": {
+      "address": "",
+      "startBlock": 0
+    },
+    "dOTCListedTokens": {
+      "address": "",
+      "startBlock": 0
     }
   }
 }
