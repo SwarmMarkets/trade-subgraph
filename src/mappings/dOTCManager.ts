@@ -1,4 +1,5 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { Address, BigInt } from '@graphprotocol/graph-ts'
+import { ZERO_ADDRESS } from '../constants/common'
 import {
   CanceledOffer,
   CompletedOffer,
@@ -38,7 +39,14 @@ export function handleNewOffer(event: CreatedOffer): void {
   }
 
   offer.offerType = BigInt.fromI32(event.params.offerType)
-  offer.specialAddress = event.params.specialAddress
+
+  let specialAddress = event.params.specialAddress
+  let isPrivate = Address.fromString(ZERO_ADDRESS).notEqual(specialAddress)
+  offer.isPrivate = isPrivate
+  if (isPrivate) {
+    offer.specialAddress = specialAddress
+  }
+
   offer.isCompleted = event.params.isComplete
   offer.availableAmount = bigIntToDecimal(
     event.params.amountIn,
@@ -116,7 +124,13 @@ export function handleNewNftOffer(event: CreatedNftOffer): void {
   offer.tokenOut = tokenOut.id
   offer.offerPrice = bigIntToDecimal(event.params.offerPrice, tokenOut.decimals)
 
-  offer.specialAddress = event.params.specialAddress
+  let specialAddress = event.params.specialAddress
+  let isPrivate = Address.fromString(ZERO_ADDRESS).notEqual(specialAddress)
+  offer.isPrivate = isPrivate
+  if (isPrivate) {
+    offer.specialAddress = specialAddress
+  }
+
   offer.isCompleted = false
   offer.cancelled = false
   offer.createdAt = event.block.timestamp
