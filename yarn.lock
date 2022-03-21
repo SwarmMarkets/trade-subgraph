@@ -2,10 +2,10 @@
 # yarn lockfile v1
 
 
-"@assemblyscript/loader@^0.19.23":
-  version "0.19.23"
-  resolved "https://registry.yarnpkg.com/@assemblyscript/loader/-/loader-0.19.23.tgz#7fccae28d0a2692869f1d1219d36093bc24d5e72"
-  integrity sha512-ulkCYfFbYj01ie1MDOyxv2F6SpRN1TOj7fQxbP07D6HmeR+gr2JLSmINKjga2emB+b1L2KGrFKBTc+e00p54nw==
+"@assemblyscript/loader@^0.20.0":
+  version "0.20.0"
+  resolved "https://registry.yarnpkg.com/@assemblyscript/loader/-/loader-0.20.0.tgz#2070b9185b918ad215654397529a1f49cb28a2e8"
+  integrity sha512-leGN3+OcVrmQ35CIAzxarbRDkQWXEcEs55GAQ0yHtszy6AJchF+lQyqceAY1tipNvLpikjvTjStHA7CZno0VgA==
 
 "@babel/code-frame@^7.0.0":
   version "7.8.3"
