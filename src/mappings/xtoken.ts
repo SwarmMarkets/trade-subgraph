@@ -1,7 +1,7 @@
 import { Address, BigInt, Bytes, log, store } from '@graphprotocol/graph-ts'
-import { DEFAULT_DECIMALS } from '../constants/common'
+import { DEFAULT_DECIMALS, ZERO_ADDRESS } from '../constants/common'
 import { Pool, PoolShare } from '../types/schema'
-import { XToken } from '../wrappers'
+import { Token, XToken } from '../wrappers'
 import {
   Paused,
   Transfer,
@@ -35,8 +35,20 @@ export function handleTransfer(event: Transfer): void {
     xTokenAddress,
     poolId,
   ])
-  let pool = Pool.load(poolId)
   let value = event.params.value.toBigDecimal()
+
+  let isMint = event.params.from.toHex() == ZERO_ADDRESS
+  let isBurn = event.params.to.toHex() == ZERO_ADDRESS
+  let token = Token.safeLoad(poolId)
+  let pool = Pool.load(poolId)
+
+  if (isMint) {
+    token.tvl = token.tvl.plus(value)
+    token.save()
+  } else if (isBurn) {
+    token.tvl = token.tvl.gt(value) ? token.tvl.minus(value) : ZERO_BD
+    token.save()
+  }
 
   if (pool == null) {
     log.debug(
@@ -46,10 +58,6 @@ export function handleTransfer(event: Transfer): void {
     return
   }
 
-  let ZERO_ADDRESS = '0x0000000000000000000000000000000000000000'
-
-  let isMint = event.params.from.toHex() == ZERO_ADDRESS
-  let isBurn = event.params.to.toHex() == ZERO_ADDRESS
   if (isMint || isBurn) {
     log.debug('Transfer event from {} to {} from tx {} is a mint or burn', [
       event.params.from.toHex(),

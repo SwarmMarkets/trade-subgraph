@@ -1,4 +1,5 @@
 import { log } from '@graphprotocol/graph-ts'
+import { ZERO_BD } from '../constants/math'
 import { DEFAULT_DECIMALS } from '../constants/common'
 import {
   SPTs as disabledSPTs,
@@ -38,6 +39,7 @@ export function handleRegisterToken(event: RegisterToken): void {
       : DEFAULT_DECIMALS
     token.name = !tokenName.reverted ? tokenName.value : ''
     token.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ''
+    token.tvl = ZERO_BD
   }
 
   if (xToken == null) {
