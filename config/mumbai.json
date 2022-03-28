@@ -11,12 +11,12 @@
       "startBlock": 24796924
     },
     "dOTCManager": {
-      "address": "0xC69ED5CCD6477A809A72317c6A4774D6946ab6c1",
-      "startBlock": 25660230
+      "address": "0x9d8E79f399b1403cfCe3C3888C7eE2D9Bc777B19",
+      "startBlock": 25701370
     },
     "dOTCListedTokens": {
-      "address": "0xd8B8f14c628fC35f26542d89Ced1597eE8C194F8",
-      "startBlock": 25660220
+      "address": "0x87345f9fcc26B622d6F16FCa4866C26Fb10251cD",
+      "startBlock": 25701360
     }
   }
 }
