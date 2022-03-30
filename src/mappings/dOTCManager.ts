@@ -182,8 +182,8 @@ export function handleTokenOfferUpdated(event: TokenOfferUpdated): void {
     let tokenOut = Token.safeLoad(offer.tokenOut)
     let newAmountOut = bigIntToDecimal(event.params.newOffer, tokenOut.decimals)
     offer.amountOut = newAmountOut
-    if (newAmountOut.gt(ZERO_BD) && offer.amountIn.gt(ZERO_BD)) {
-      offer.price = newAmountOut.div(offer.amountIn)
+    if (newAmountOut.gt(ZERO_BD) && offer.availableAmount.gt(ZERO_BD)) {
+      offer.price = newAmountOut.div(offer.availableAmount)
     } else {
       offer.price = ZERO_BD
     }
