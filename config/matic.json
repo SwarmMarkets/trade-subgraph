@@ -1,6 +1,6 @@
 {
   "network": "matic",
-  "schemaFileName": "schema.graphql",
+  "schemaFileName": "schema.dotc.graphql",
   "dataSources": {
     "factory": {
       "address": "0x991Fd11876A438af7BcaDc98f4b3CF201bdf6191",
@@ -9,6 +9,14 @@
     "xTokenWrapper": {
       "address": "0x6cDDe4eD9165405c1914b229d3cD4Ac9C354C331",
       "startBlock": 23343641
+    },
+    "dOTCManager": {
+      "address": "0xDD291aFa4bB16E800767043A6199A2D9172948f4",
+      "startBlock": 26578712
+    },
+    "dOTCListedTokens": {
+      "address": "0x7eE117753F3Ac9B76170A6F0b1B977D2ad7131fe",
+      "startBlock": 26578702
     }
   }
 }
