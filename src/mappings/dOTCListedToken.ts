@@ -1,4 +1,4 @@
-import { Address } from '@graphprotocol/graph-ts'
+import { Address, store } from '@graphprotocol/graph-ts'
 import { DEFAULT_DECIMALS } from '../constants/common'
 import { ERC1155 } from '../types/dOTCListedTokens/ERC1155'
 import { ERC20 } from '../types/dOTCListedTokens/ERC20'
@@ -6,6 +6,8 @@ import { ERC1155Token, ERC20Token } from '../types/schema'
 import {
   RegisterERC1155Token,
   RegisterERC20Token,
+  unRegisterERC1155,
+  unRegisterERC20,
 } from './../types/dOTCListedTokens/TokenListManager'
 import { Token } from './../wrappers/token'
 
@@ -46,4 +48,18 @@ export function addNewERC1155Token(event: RegisterERC1155Token): void {
     erc1155Token.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ''
   }
   erc1155Token.save()
+}
+
+export function unregisterERC20Token(event: unRegisterERC20): void {
+  let erc20Token = ERC20Token.load(event.params.token.toHexString())
+  if (erc20Token !== null) {
+    store.remove('ERC20Token', erc20Token.id)
+  }
+}
+
+export function unregisterERC1155Token(event: unRegisterERC1155): void {
+  let erc1155Token = ERC1155Token.load(event.params.token.toHexString())
+  if (erc1155Token !== null) {
+    store.remove('ERC1155Token', erc1155Token.id)
+  }
 }
