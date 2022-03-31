@@ -121,6 +121,10 @@ dataSources:
           handler: addNewERC20Token
         - event: RegisterERC1155Token(indexed address)
           handler: addNewERC1155Token
+        - event: unRegisterERC20(indexed address)
+          handler: unregisterERC20Token
+        - event: unRegisterERC1155(indexed address)
+          handler: unregisterERC1155Token
 {{ /dataSources.dOTCListedTokens }}
 templates:
   - kind: ethereum/contract
