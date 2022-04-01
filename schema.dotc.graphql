@@ -155,8 +155,8 @@ type XToken @entity {
 type Offer @entity {
   id: ID!
   maker: Bytes! # address of maker
-  tokenIn: Token!
-  tokenOut: Token!
+  tokenIn: ERC20Token!
+  tokenOut: ERC20Token!
   amountIn: BigDecimal!
   amountOut: BigDecimal!
   price: BigDecimal!
@@ -184,7 +184,7 @@ type NftOffer @entity {
   id: ID!
   maker: Bytes! # address of maker
   nft: ERC1155Token!
-  tokenOut: Token!
+  tokenOut: ERC20Token!
   offerPrice: BigDecimal!
   nftIds: [BigInt!]!
   nftAmounts: [BigInt!]!
