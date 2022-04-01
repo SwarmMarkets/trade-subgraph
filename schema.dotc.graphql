@@ -210,10 +210,12 @@ type ERC20Token @entity {
   name: String!
   symbol: String!
   decimals: Int!
+  paused: Boolean!
 }
 
 type ERC1155Token @entity {
   id: ID!
   name: String!
   symbol: String!
+  paused: Boolean!
 }

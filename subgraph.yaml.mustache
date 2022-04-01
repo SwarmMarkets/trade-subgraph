@@ -118,9 +118,9 @@ dataSources:
           file: ./abis/ERC1155.json
       eventHandlers:
         - event: RegisterERC20Token(indexed address)
-          handler: addNewERC20Token
+          handler: registerERC20Token
         - event: RegisterERC1155Token(indexed address)
-          handler: addNewERC1155Token
+          handler: registerERC1155Token
         - event: unRegisterERC20(indexed address)
           handler: unregisterERC20Token
         - event: unRegisterERC1155(indexed address)
