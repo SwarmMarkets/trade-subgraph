@@ -67,10 +67,12 @@ export function handleNewOrder(event: CreatedOrder): void {
 
   if (offer != null) {
     let tokenPaid = ERC20Token.safeLoad(offer.tokenOut)
-    order.amountPaid = bigIntToDecimal(
+    let amountPaid = bigIntToDecimal(
       event.params.amountPaid,
       tokenPaid.decimals,
     )
+
+    order.amountPaid = amountPaid
 
     let tokenToReceive = ERC20Token.safeLoad(offer.tokenIn)
     let amountToReceive = bigIntToDecimal(
@@ -82,6 +84,9 @@ export function handleNewOrder(event: CreatedOrder): void {
     order.offers = offer.id
     offer.availableAmount = offer.availableAmount.gt(amountToReceive)
       ? offer.availableAmount.minus(amountToReceive)
+      : ZERO_BD
+    offer.amountOut = offer.amountOut.gt(amountPaid)
+      ? offer.amountOut.minus(amountPaid)
       : ZERO_BD
     offer.save()
   } else {
