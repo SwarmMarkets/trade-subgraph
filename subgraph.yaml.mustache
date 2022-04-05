@@ -74,7 +74,7 @@ dataSources:
       eventHandlers:
         - event: CreatedOffer(indexed uint256,indexed address,address,address,uint256,uint256,uint8,address,bool,uint256)
           handler: handleNewOffer
-        - event: CreatedOrder(indexed uint256,indexed uint256,uint256,indexed address,uint256)
+        - event: CreatedOrder(indexed uint256,(uint256,uint256,address,uint256,uint256),uint256)
           handler: handleNewOrder
         - event: CompletedOffer(uint256)
           handler: handleOfferCompleted
@@ -92,6 +92,10 @@ dataSources:
           handler: handleTokenOfferUpdated
         - event: NftOfferUpdated(indexed uint256,uint256)
           handler: handleNftOfferUpdated
+        - event: UpdatedTokenOfferExpiry(indexed uint256,uint256)
+          handler: handleUpdatedTokenOfferExpiry
+        - event: UpdatedNftOfferExpiry(indexed uint256,uint256)
+          handler: handleUpdatedNftOfferExpiry
 {{ /dataSources.dOTCManager }}
 {{ #dataSources.dOTCListedTokens }}
   - kind: ethereum/contract

@@ -266,31 +266,46 @@
         {
           "indexed": true,
           "internalType": "uint256",
-          "name": "offerId",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "uint256",
           "name": "orderId",
           "type": "uint256"
         },
         {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "offerId",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountToSend",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "takerAddress",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amountToReceive",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minExpectedAmount",
+              "type": "uint256"
+            }
+          ],
           "indexed": false,
-          "internalType": "uint256",
-          "name": "amountPaid",
-          "type": "uint256"
+          "internalType": "struct IdOTC.Order",
+          "name": "order",
+          "type": "tuple"
         },
         {
-          "indexed": true,
-          "internalType": "address",
-          "name": "orderedBy",
-          "type": "address"
-        },
-        {
           "indexed": false,
           "internalType": "uint256",
-          "name": "amountToReceive",
+          "name": "availableAmountOut",
           "type": "uint256"
         }
       ],
@@ -421,6 +436,44 @@
         },
         {
           "indexed": false,
+          "internalType": "uint256",
+          "name": "newExpiryTimestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "UpdatedNftOfferExpiry",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "offerId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newExpiryTimestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "UpdatedTokenOfferExpiry",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "offerId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
           "internalType": "address",
           "name": "freezedBy",
           "type": "address"
@@ -451,6 +504,19 @@
     {
       "inputs": [],
       "name": "BPSNUMBER",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "DECIMAL",
       "outputs": [
         {
           "internalType": "uint256",
@@ -726,6 +792,11 @@
               "type": "address"
             },
             {
+              "internalType": "uint256",
+              "name": "availableAmount",
+              "type": "uint256"
+            },
+            {
               "internalType": "address",
               "name": "tokenOutAddress",
               "type": "address"
@@ -921,6 +992,11 @@
               "type": "address"
             },
             {
+              "internalType": "uint256",
+              "name": "availableAmount",
+              "type": "uint256"
+            },
+            {
               "internalType": "address",
               "name": "tokenOutAddress",
               "type": "address"
@@ -1049,6 +1125,11 @@
               "internalType": "address",
               "name": "tokenInAddress",
               "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "availableAmount",
+              "type": "uint256"
             },
             {
               "internalType": "address",
@@ -1224,6 +1305,11 @@
               "type": "address"
             },
             {
+              "internalType": "uint256",
+              "name": "availableAmount",
+              "type": "uint256"
+            },
+            {
               "internalType": "address",
               "name": "tokenOutAddress",
               "type": "address"
@@ -1286,6 +1372,11 @@
             {
               "internalType": "uint256",
               "name": "amountToReceive",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "minExpectedAmount",
               "type": "uint256"
             }
           ],
@@ -1450,7 +1541,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_expiryInDays",
+          "name": "_expiryTimestamp",
           "type": "uint256"
         },
         {
@@ -1764,6 +1855,11 @@
           "internalType": "uint256",
           "name": "_amount",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "minExpectedAmount",
+          "type": "uint256"
         }
       ],
       "name": "takeOffer",
@@ -1819,6 +1915,11 @@
         {
           "internalType": "uint256",
           "name": "newOffer",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_expiryTimestamp",
           "type": "uint256"
         },
         {

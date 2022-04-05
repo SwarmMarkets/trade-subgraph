@@ -11,6 +11,8 @@ import {
   CanceledNftOffer,
   TokenOfferUpdated,
   NftOfferUpdated,
+  UpdatedTokenOfferExpiry,
+  UpdatedNftOfferExpiry,
 } from '../types/dOTC/DOTCManager'
 import { Offer, Order, NftOffer, NftOrder } from '../types/schema'
 import { bigIntToDecimal } from './helpers'
@@ -60,7 +62,7 @@ export function handleNewOffer(event: CreatedOffer): void {
 
 export function handleNewOrder(event: CreatedOrder): void {
   let order = Order.load(event.params.orderId.toHex())
-  let offer = Offer.load(event.params.offerId.toHex())
+  let offer = Offer.load(event.params.order.offerId.toHex())
   if (order == null) {
     order = new Order(event.params.orderId.toHex())
   }
@@ -68,7 +70,7 @@ export function handleNewOrder(event: CreatedOrder): void {
   if (offer != null) {
     let tokenPaid = ERC20Token.safeLoad(offer.tokenOut)
     let amountPaid = bigIntToDecimal(
-      event.params.amountPaid,
+      event.params.order.amountToSend,
       tokenPaid.decimals,
     )
 
@@ -76,7 +78,7 @@ export function handleNewOrder(event: CreatedOrder): void {
 
     let tokenToReceive = ERC20Token.safeLoad(offer.tokenIn)
     let amountToReceive = bigIntToDecimal(
-      event.params.amountToReceive,
+      event.params.order.amountToReceive,
       tokenToReceive.decimals,
     )
     order.amountToReceive = amountToReceive
@@ -94,7 +96,7 @@ export function handleNewOrder(event: CreatedOrder): void {
     order.amountToReceive = ZERO_BD
   }
 
-  order.orderedBy = event.params.orderedBy
+  order.orderedBy = event.params.order.takerAddress
   order.createdAt = event.block.timestamp
   order.save()
 }
@@ -201,6 +203,26 @@ export function handleNftOfferUpdated(event: NftOfferUpdated): void {
   if (offer != null) {
     let tokenOut = ERC20Token.safeLoad(offer.tokenOut)
     offer.offerPrice = bigIntToDecimal(event.params.newOffer, tokenOut.decimals)
+    offer.save()
+  }
+}
+
+export function handleUpdatedTokenOfferExpiry(
+  event: UpdatedTokenOfferExpiry,
+): void {
+  let offer = Offer.load(event.params.offerId.toHex())
+  if (offer != null) {
+    offer.expiresAt = event.params.newExpiryTimestamp
+    offer.save()
+  }
+}
+
+export function handleUpdatedNftOfferExpiry(
+  event: UpdatedNftOfferExpiry,
+): void {
+  let offer = NftOffer.load(event.params.offerId.toHex())
+  if (offer != null) {
+    offer.expiresAt = event.params.newExpiryTimestamp
     offer.save()
   }
 }
