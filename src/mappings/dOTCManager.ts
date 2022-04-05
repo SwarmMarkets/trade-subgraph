@@ -213,6 +213,7 @@ export function handleUpdatedTokenOfferExpiry(
   let offer = Offer.load(event.params.offerId.toHex())
   if (offer != null) {
     offer.expiresAt = event.params.newExpiryTimestamp
+    offer.save()
   }
 }
 
@@ -222,5 +223,6 @@ export function handleUpdatedNftOfferExpiry(
   let offer = NftOffer.load(event.params.offerId.toHex())
   if (offer != null) {
     offer.expiresAt = event.params.newExpiryTimestamp
+    offer.save()
   }
 }
