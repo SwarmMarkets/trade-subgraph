@@ -1,6 +1,6 @@
 {
   "network": "rinkeby",
-  "schemaFileName": "schema.rinkeby.graphql",
+  "schemaFileName": "schema.dotc.graphql",
   "dataSources": {
     "factory": {
       "address": "0xc7D87c0B11288de9fD627e9383f63C953e2FdD72",
@@ -11,12 +11,12 @@
       "startBlock": 9780125
     },
     "dOTCManager": {
-      "address": "0x31d544B14f985Dc096e05b7Adc25f3030b2e4E4a",
-      "startBlock": 10272788
+      "address": "0x9378d61df0a11415e010963e415D12dd212fbAab",
+      "startBlock": 10415830
     },
     "dOTCListedTokens": {
-      "address": "0x324235173d84F0Ab7B779868075e10ab73Eb8378",
-      "startBlock": 10272787
+      "address": "0xDC687aD5e42F200C701913B7B14aBD08C5319358",
+      "startBlock": 10415830
     }
   }
 }

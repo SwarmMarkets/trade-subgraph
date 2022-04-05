@@ -139,6 +139,7 @@ type Token @entity {
   name: String!
   symbol: String!
   decimals: Int!
+  tvl: BigDecimal! # Total value locked in protocol
 }
 
 type XToken @entity {
@@ -154,13 +155,14 @@ type XToken @entity {
 type Offer @entity {
   id: ID!
   maker: Bytes! # address of maker
-  tokenIn: Token!
-  tokenOut: Token!
+  tokenIn: ERC20Token!
+  tokenOut: ERC20Token!
   amountIn: BigDecimal!
   amountOut: BigDecimal!
   price: BigDecimal!
   offerType: BigInt!
-  specialAddress: Bytes!
+  isPrivate: Boolean!
+  specialAddress: Bytes
   isCompleted: Boolean!
   orders: [Order!]! @derivedFrom(field: "offers")
   cancelled: Boolean!
@@ -182,12 +184,13 @@ type NftOffer @entity {
   id: ID!
   maker: Bytes! # address of maker
   nft: ERC1155Token!
-  tokenOut: Token!
+  tokenOut: ERC20Token!
   offerPrice: BigDecimal!
   nftIds: [BigInt!]!
   nftAmounts: [BigInt!]!
   expiresAt: BigInt!
-  specialAddress: Bytes!
+  isPrivate: Boolean!
+  specialAddress: Bytes
   isCompleted: Boolean!
   orders: [NftOrder!]! @derivedFrom(field: "offers")
   createdAt: BigInt!
@@ -207,10 +210,12 @@ type ERC20Token @entity {
   name: String!
   symbol: String!
   decimals: Int!
+  paused: Boolean!
 }
 
 type ERC1155Token @entity {
   id: ID!
   name: String!
   symbol: String!
+  paused: Boolean!
 }

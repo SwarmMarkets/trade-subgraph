@@ -74,7 +74,7 @@ dataSources:
       eventHandlers:
         - event: CreatedOffer(indexed uint256,indexed address,address,address,uint256,uint256,uint8,address,bool,uint256)
           handler: handleNewOffer
-        - event: CreatedOrder(indexed uint256,indexed uint256,uint256,indexed address,uint256)
+        - event: CreatedOrder(indexed uint256,(uint256,uint256,address,uint256,uint256),uint256)
           handler: handleNewOrder
         - event: CompletedOffer(uint256)
           handler: handleOfferCompleted
@@ -92,6 +92,10 @@ dataSources:
           handler: handleTokenOfferUpdated
         - event: NftOfferUpdated(indexed uint256,uint256)
           handler: handleNftOfferUpdated
+        - event: UpdatedTokenOfferExpiry(indexed uint256,uint256)
+          handler: handleUpdatedTokenOfferExpiry
+        - event: UpdatedNftOfferExpiry(indexed uint256,uint256)
+          handler: handleUpdatedNftOfferExpiry
 {{ /dataSources.dOTCManager }}
 {{ #dataSources.dOTCListedTokens }}
   - kind: ethereum/contract
@@ -118,9 +122,13 @@ dataSources:
           file: ./abis/ERC1155.json
       eventHandlers:
         - event: RegisterERC20Token(indexed address)
-          handler: addNewERC20Token
+          handler: registerERC20Token
         - event: RegisterERC1155Token(indexed address)
-          handler: addNewERC1155Token
+          handler: registerERC1155Token
+        - event: unRegisterERC20(indexed address)
+          handler: unregisterERC20Token
+        - event: unRegisterERC1155(indexed address)
+          handler: unregisterERC1155Token
 {{ /dataSources.dOTCListedTokens }}
 templates:
   - kind: ethereum/contract
