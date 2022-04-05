@@ -2,7 +2,7 @@
   "name": "trade-subgraph",
   "version": "0.2.0",
   "scripts": {
-    "generate:config": "echo %NETWORK% && mustache config/%NETWORK%.json subgraph.yaml.mustache > subgraph.yaml",
+    "generate:config": "echo $NETWORK && mustache config/$NETWORK.json subgraph.yaml.mustache > subgraph.yaml",
     "codegen": "graph codegen --output-dir src/types/",
     "build": "graph build",
     "deploy": "graph deploy --access-token $ACCESS_TOKEN  $GITHUB_USERNAME/$SUBGRAPH_NAME --ipfs https://api.thegraph.com/ipfs/ --node https://api.thegraph.com/deploy/",
