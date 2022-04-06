@@ -62,7 +62,7 @@ export function handleNewOffer(event: CreatedOffer): void {
 
 export function handleNewOrder(event: CreatedOrder): void {
   let order = Order.load(event.params.orderId.toHex())
-  let offer = Offer.load(event.params.order.offerId.toHex())
+  let offer = Offer.load(event.params.offerId.toHex())
   if (order == null) {
     order = new Order(event.params.orderId.toHex())
   }
@@ -70,7 +70,7 @@ export function handleNewOrder(event: CreatedOrder): void {
   if (offer != null) {
     let tokenPaid = ERC20Token.safeLoad(offer.tokenOut)
     let amountPaid = bigIntToDecimal(
-      event.params.order.amountToSend,
+      event.params.amountPaid,
       tokenPaid.decimals,
     )
 
@@ -78,7 +78,7 @@ export function handleNewOrder(event: CreatedOrder): void {
 
     let tokenToReceive = ERC20Token.safeLoad(offer.tokenIn)
     let amountToReceive = bigIntToDecimal(
-      event.params.order.amountToReceive,
+      event.params.amountToReceive,
       tokenToReceive.decimals,
     )
     order.amountToReceive = amountToReceive
@@ -96,7 +96,7 @@ export function handleNewOrder(event: CreatedOrder): void {
     order.amountToReceive = ZERO_BD
   }
 
-  order.orderedBy = event.params.order.takerAddress
+  order.orderedBy = event.params.orderedBy
   order.createdAt = event.block.timestamp
   order.save()
 }
