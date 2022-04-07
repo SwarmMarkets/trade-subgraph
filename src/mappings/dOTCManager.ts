@@ -5,16 +5,10 @@ import {
   CompletedOffer,
   CreatedOffer,
   CreatedOrder,
-  CreatedNftOffer,
-  CreatedNftOrder,
-  CompletedNftOffer,
-  CanceledNftOffer,
   TokenOfferUpdated,
-  NftOfferUpdated,
   UpdatedTokenOfferExpiry,
-  UpdatedNftOfferExpiry,
 } from '../types/dOTC/DOTCManager'
-import { Offer, Order, NftOffer, NftOrder } from '../types/schema'
+import { Offer, Order } from '../types/schema'
 import { bigIntToDecimal } from './helpers'
 import { ERC20Token } from '../wrappers/dOTCTokens'
 import { ZERO_BD } from '../constants/math'
@@ -117,72 +111,6 @@ export function handleCanceledOffer(event: CanceledOffer): void {
   }
 }
 
-export function handleNewNftOffer(event: CreatedNftOffer): void {
-  let offer = NftOffer.load(event.params.nftOfferId.toHex())
-  if (offer == null) {
-    offer = new NftOffer(event.params.nftOfferId.toHex())
-  }
-  offer.maker = event.transaction.from
-  offer.nft = event.params.nftAddress.toHexString()
-  offer.nftIds = event.params.nftIds
-  offer.nftAmounts = event.params.nftAmounts
-  offer.expiresAt = event.params.expiresAt
-  let tokenOut = ERC20Token.safeLoad(event.params.tokenOutAddress.toHexString())
-  offer.tokenOut = tokenOut.id
-  offer.offerPrice = bigIntToDecimal(event.params.offerPrice, tokenOut.decimals)
-
-  let specialAddress = event.params.specialAddress
-  let isPrivate = Address.fromString(ZERO_ADDRESS).notEqual(specialAddress)
-  offer.isPrivate = isPrivate
-  if (isPrivate) {
-    offer.specialAddress = specialAddress
-  }
-
-  offer.isCompleted = false
-  offer.cancelled = false
-  offer.createdAt = event.block.timestamp
-  offer.save()
-}
-
-export function handleNewNftOrder(event: CreatedNftOrder): void {
-  let order = NftOrder.load(event.params.orderId.toHex())
-  let offer = NftOffer.load(event.params.nftOfferId.toHex())
-  if (order == null) {
-    order = new NftOrder(event.params.orderId.toHex())
-  }
-
-  if (offer != null) {
-    let tokenPaid = ERC20Token.safeLoad(offer.tokenOut)
-    order.amountPaid = bigIntToDecimal(event.params.amount, tokenPaid.decimals)
-
-    order.offers = offer.id
-    offer.isCompleted = true
-    offer.save()
-  } else {
-    order.amountPaid = ZERO_BD
-  }
-
-  order.orderedBy = event.params.taker
-  order.createdAt = event.block.timestamp
-  order.save()
-}
-
-export function handleNftOfferCompleted(event: CompletedNftOffer): void {
-  let offer = NftOffer.load(event.params.offerId.toHex())
-  if (offer != null) {
-    offer.isCompleted = true
-    offer.save()
-  }
-}
-
-export function handleCanceledNftOffer(event: CanceledNftOffer): void {
-  let offer = NftOffer.load(event.params.offerId.toHex())
-  if (offer != null) {
-    offer.cancelled = true
-    offer.save()
-  }
-}
-
 export function handleTokenOfferUpdated(event: TokenOfferUpdated): void {
   let offer = Offer.load(event.params.offerId.toHex())
   if (offer != null) {
@@ -198,29 +126,10 @@ export function handleTokenOfferUpdated(event: TokenOfferUpdated): void {
   }
 }
 
-export function handleNftOfferUpdated(event: NftOfferUpdated): void {
-  let offer = NftOffer.load(event.params.offerId.toHex())
-  if (offer != null) {
-    let tokenOut = ERC20Token.safeLoad(offer.tokenOut)
-    offer.offerPrice = bigIntToDecimal(event.params.newOffer, tokenOut.decimals)
-    offer.save()
-  }
-}
-
 export function handleUpdatedTokenOfferExpiry(
   event: UpdatedTokenOfferExpiry,
 ): void {
   let offer = Offer.load(event.params.offerId.toHex())
-  if (offer != null) {
-    offer.expiresAt = event.params.newExpiryTimestamp
-    offer.save()
-  }
-}
-
-export function handleUpdatedNftOfferExpiry(
-  event: UpdatedNftOfferExpiry,
-): void {
-  let offer = NftOffer.load(event.params.offerId.toHex())
   if (offer != null) {
     offer.expiresAt = event.params.newExpiryTimestamp
     offer.save()
