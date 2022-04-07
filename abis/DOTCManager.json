@@ -48,25 +48,6 @@
         "internalType": "address",
         "name": "canceledBy",
         "type": "address"
-      }
-    ],
-    "name": "CanceledNftOffer",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "offerId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "canceledBy",
-        "type": "address"
       },
       {
         "indexed": false,
@@ -82,19 +63,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "offerId",
-        "type": "uint256"
-      }
-    ],
-    "name": "CompletedNftOffer",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": false,
         "internalType": "uint256",
         "name": "offerId",
@@ -102,92 +70,6 @@
       }
     ],
     "name": "CompletedOffer",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "nftOfferId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "nftAddress",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "tokenOutAddress",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "offerPrice",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256[]",
-        "name": "nftIds",
-        "type": "uint256[]"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256[]",
-        "name": "nftAmounts",
-        "type": "uint256[]"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "specialAddress",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "expiresAt",
-        "type": "uint256"
-      }
-    ],
-    "name": "CreatedNftOffer",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "nftOfferId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "orderId",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "taker",
-        "type": "address"
-      }
-    ],
-    "name": "CreatedNftOrder",
     "type": "event"
   },
   {
@@ -584,25 +466,6 @@
     "inputs": [
       {
         "internalType": "uint256",
-        "name": "nftOfferId",
-        "type": "uint256"
-      }
-    ],
-    "name": "cancelNftOffer",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "success",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
         "name": "offerId",
         "type": "uint256"
       }
@@ -674,206 +537,6 @@
       }
     ],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "nftOfferId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getNftOffer",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "bool",
-            "name": "isNft",
-            "type": "bool"
-          },
-          {
-            "internalType": "address",
-            "name": "maker",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "offerId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "nftIds",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "bool",
-            "name": "fullyTaken",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amountIn",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "offerFee",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "unitPrice",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amountOut",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "nftAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "expiryTime",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "offerPrice",
-            "type": "uint256"
-          },
-          {
-            "internalType": "enum IdOTC.OfferType",
-            "name": "offerType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "nftAmounts",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "address",
-            "name": "escrowAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "specialAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenInAddress",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "availableAmount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "address",
-            "name": "tokenOutAddress",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct IdOTC.Offer",
-        "name": "offer",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "nftOfferId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getNftOfferOwner",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_nftOrderId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getNftOrders",
-    "outputs": [
-      {
-        "components": [
-          {
-            "internalType": "uint256",
-            "name": "offerId",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "nftIds",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amountPaid",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256[]",
-            "name": "nftAmounts",
-            "type": "uint256[]"
-          },
-          {
-            "internalType": "address",
-            "name": "takerAddress",
-            "type": "address"
-          }
-        ],
-        "internalType": "struct IdOTC.NftOrder",
-        "name": "order",
-        "type": "tuple"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_nftOrderId",
-        "type": "uint256"
-      }
-    ],
-    "name": "getNftTaker",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "taker",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1434,74 +1097,6 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "offerId",
-        "type": "uint256"
-      }
-    ],
-    "name": "isActiveNftOffer",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "active",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "_nftAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_tokenOutAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_nftIds",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "_nftAmounts",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_offerPrice",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_expiryInDays",
-        "type": "uint256"
-      },
-      {
-        "internalType": "address",
-        "name": "_specialAddress",
-        "type": "address"
-      }
-    ],
-    "name": "makeNFTOffer",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "offerId",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "_tokenInAddress",
         "type": "address"
@@ -1543,84 +1138,6 @@
         "internalType": "uint256",
         "name": "offerId",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "uint256[]",
-        "name": "",
-        "type": "uint256[]"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "name": "onERC1155BatchReceived",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "",
-        "type": "bytes"
-      }
-    ],
-    "name": "onERC1155Received",
-    "outputs": [
-      {
-        "internalType": "bytes4",
-        "name": "",
-        "type": "bytes4"
       }
     ],
     "stateMutability": "nonpayable",
@@ -1786,49 +1303,6 @@
   {
     "inputs": [
       {
-        "internalType": "bytes4",
-        "name": "interfaceId",
-        "type": "bytes4"
-      }
-    ],
-    "name": "supportsInterface",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "nftOfferId",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "takeNftOffer",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "takenOderId",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "uint256",
         "name": "offerId",
         "type": "uint256"
@@ -1903,11 +1377,6 @@
         "internalType": "uint256",
         "name": "_expiryTimestamp",
         "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "isNFT",
-        "type": "bool"
       }
     ],
     "name": "updateOffer",
