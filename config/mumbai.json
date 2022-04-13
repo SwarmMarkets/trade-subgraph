@@ -1,6 +1,6 @@
 {
   "network": "mumbai",
-  "schemaFileName": "schema.dotc.graphql",
+  "schemaFileName": "schema.graphql",
   "dataSources": {
     "factory": {
       "address": "0xd290e0F094D860B1F5860e9ede89b6FA50C2543F",

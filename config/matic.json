@@ -1,6 +1,6 @@
 {
   "network": "matic",
-  "schemaFileName": "schema.dotc.graphql",
+  "schemaFileName": "schema.graphql",
   "dataSources": {
     "factory": {
       "address": "0x991Fd11876A438af7BcaDc98f4b3CF201bdf6191",
