@@ -10,7 +10,7 @@ export function registerERC20Token(event: RegisterERC20Token): void {
   let tokenId = event.params.token.toHexString()
   let erc20Token = ERC20Token.loadOrCreate(tokenId)
 
-  if (erc20Token.paused) {
+  if (!!erc20Token && erc20Token.paused) {
     erc20Token.paused = false
     erc20Token.save()
   }
@@ -20,7 +20,7 @@ export function registerERC1155Token(event: RegisterERC1155Token): void {
   let erc1155TokenId = event.params.token.toHexString()
   let erc1155Token = ERC1155Token.loadOrCreate(erc1155TokenId)
 
-  if (erc1155Token.paused) {
+  if (!!erc1155Token && erc1155Token.paused) {
     erc1155Token.paused = false
     erc1155Token.save()
   }

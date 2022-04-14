@@ -1,5 +1,4 @@
 import { Address, log } from '@graphprotocol/graph-ts'
-import { DEFAULT_DECIMALS } from '../constants/common'
 import { ERC1155 } from '../types/dOTCListedTokens/ERC1155'
 import { ERC20 } from '../types/dOTCListedTokens/ERC20'
 import {
@@ -19,14 +18,22 @@ export class ERC20Token extends SchematicERC20Token {
     return erc20token as ERC20Token
   }
 
-  static loadOrCreate(id: string): ERC20Token {
+  static loadOrCreate(id: string): ERC20Token | null {
     let erc20Token = ERC20Token.load(id)
 
+    // skip initialization if the erc20 is already registered once
     if (erc20Token == null) {
       erc20Token = new ERC20Token(id)
 
+      // try to load the erc20 properties from the Token entity
       let token = Token.load(id)
-      if (token == null) {
+      if (token !== null) {
+        erc20Token.name = token.name
+        erc20Token.symbol = token.symbol
+        erc20Token.decimals = token.decimals
+      } else {
+        // if the erc20 was not registered on the trade platform
+        // make some calls to the ERC20 contract
         let erc20Address = Address.fromString(id)
         let erc20 = ERC20.bind(erc20Address)
 
@@ -34,15 +41,20 @@ export class ERC20Token extends SchematicERC20Token {
         let tokenName = erc20.try_name()
         let tokenSymbol = erc20.try_symbol()
 
-        erc20Token.decimals = !tokenDecimals.reverted
-          ? tokenDecimals.value
-          : DEFAULT_DECIMALS
-        erc20Token.name = !tokenName.reverted ? tokenName.value : ''
-        erc20Token.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ''
-      } else {
-        erc20Token.name = token.name
-        erc20Token.symbol = token.symbol
-        erc20Token.decimals = token.decimals
+        if (
+          !tokenDecimals.reverted &&
+          !tokenName.reverted &&
+          !tokenSymbol.reverted
+        ) {
+          erc20Token.decimals = tokenDecimals.value
+          erc20Token.name = tokenName.value
+          erc20Token.symbol = tokenSymbol.value
+        } else {
+          // if some of the erc20 calls failed it means
+          // that the contract is missing decimals or name or symbol
+          log.warning('Someone tried to register non-erc20 contract {}', [id])
+          return null
+        }
       }
 
       erc20Token.paused = false
@@ -64,7 +76,7 @@ export class ERC1155Token extends SchematicERC1155Token {
     return erc1155Token as ERC20Token
   }
 
-  static loadOrCreate(id: string): ERC1155Token {
+  static loadOrCreate(id: string): ERC1155Token | null {
     let erc1155Token = ERC1155Token.load(id)
 
     if (erc1155Token == null) {
@@ -76,8 +88,15 @@ export class ERC1155Token extends SchematicERC1155Token {
       let tokenName = erc1155.try_name()
       let tokenSymbol = erc1155.try_symbol()
 
-      erc1155Token.name = !tokenName.reverted ? tokenName.value : ''
-      erc1155Token.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ''
+      if (!tokenName.reverted && !tokenSymbol.reverted) {
+        erc1155Token.name = tokenName.value
+        erc1155Token.symbol = tokenSymbol.value
+      } else {
+        // if some of the erc1155 calls failed it means
+        // that the contract is missing name or symbol
+        log.warning('Someone tried to register non-erc1155 contract {}', [id])
+        return null
+      }
 
       erc1155Token.paused = false
       erc1155Token.save()
