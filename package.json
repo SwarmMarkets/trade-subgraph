@@ -15,7 +15,7 @@
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.21.2",
     "@graphprotocol/graph-ts": "^0.20.1",
-    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/eslint-plugin": "^5.20.0",
     "@typescript-eslint/parser": "^5.20.0",
     "assemblyscript": "^0.20.4",
     "env-cmd": "^10.1.0",
