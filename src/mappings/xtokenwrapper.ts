@@ -1,10 +1,8 @@
 import { log } from '@graphprotocol/graph-ts'
+import { isTokenDisabled } from '../utils/isTokenDisabled'
+import { isXTokenDisabled } from '../utils/isXTokenDisabled'
 import { ZERO_BD } from '../constants/math'
 import { DEFAULT_DECIMALS } from '../constants/common'
-import {
-  SPTs as disabledSPTs,
-  xSPTs as disabledXSPTSs,
-} from '../constants/disabled-tokens'
 import { Token, XToken } from '../types/schema'
 import { XToken as XTokenAbi } from '../types/templates'
 import { ERC20 } from '../types/XTokenWrapper/ERC20'
@@ -20,8 +18,8 @@ export function handleRegisterToken(event: RegisterToken): void {
     xTokenId,
   ])
 
-  // skip misconfigured pools
-  if (disabledSPTs.includes(tokenId) || disabledXSPTSs.includes(xTokenId)) {
+  // skip misconfigured pools and tokens
+  if (isTokenDisabled(tokenId) || isXTokenDisabled(xTokenId)) {
     return
   }
 
