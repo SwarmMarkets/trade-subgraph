@@ -7,5 +7,16 @@ module.exports = {
     "comma-spacing": ["error", { before: false, after: true }],
     "prefer-const": ["off"],
     "prettier/prettier": "error",
-  },
+    "@typescript-eslint/ban-types": [
+      "error",
+      {
+        types: {
+          BigInt: false,
+          // un-ban a type that's banned by default
+          "{}": false
+        },
+        extendDefaults: true
+      }
+    ]
+  }
 };
