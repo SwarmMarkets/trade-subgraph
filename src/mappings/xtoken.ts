@@ -19,12 +19,18 @@ export function handleUnpaused(event: Unpaused): void {
   changeXTokenState(event.address, false)
 }
 
-function changeXTokenState(xTokenAddress: Address, xTokenState: boolean): void {
+function changeXTokenState(xTokenAddress: Address, paused: boolean): void {
   let xTokenId = xTokenAddress.toHexString()
   let xToken = XToken.safeLoad(xTokenId)
 
-  xToken.paused = xTokenState
+  xToken.paused = paused
   xToken.save()
+
+  // Copy paused property to the underlying token for filtering
+  let token = Token.safeLoad(xToken.token)
+
+  token.paused = paused
+  token.save()
 }
 
 export function handleTransfer(event: Transfer): void {

@@ -140,6 +140,7 @@ type Token @entity {
   symbol: String!
   decimals: Int!
   tvl: BigDecimal! # Total value locked in protocol
+  paused: Boolean! # Temp workaround until graph supports filtering on nested field
 }
 
 type XToken @entity {
