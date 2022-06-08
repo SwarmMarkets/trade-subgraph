@@ -3,9 +3,10 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
-      # Check for updates at 9am UTC
+      # Check for updates at 9am UTC each monday
+      interval: "weekly"
       time: "09:00"
+      day: "monday"
     target-branch: "develop"
     labels:
       - "dependencies"
