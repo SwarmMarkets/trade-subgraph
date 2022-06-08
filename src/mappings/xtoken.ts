@@ -31,6 +31,13 @@ function changeXTokenState(xTokenAddress: Address, paused: boolean): void {
 
   token.paused = paused
   token.save()
+
+  let pool = Pool.load(token.id)
+
+  if (pool !== null && pool.totalShares.notEqual(ZERO_BD)) {
+    pool.active = !paused
+    pool.save()
+  }
 }
 
 export function handleTransfer(event: Transfer): void {
