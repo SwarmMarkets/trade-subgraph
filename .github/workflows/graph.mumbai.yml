@@ -33,13 +33,18 @@ jobs:
       - name: Setup NodeJS
         uses: actions/setup-node@v2
         with:
-          node-version: 12.22.8
-          cache: 'yarn'
+          node-version: 14
 
-      - name: Install deps (with cache)
-        uses: bahmutov/npm-install@v1.6.0
+      - name: Get yarn cache
+        uses: actions/cache@v2
+        id: cache
         with:
-          install-command: yarn --frozen-lockfile --silent
+          path: "**/node_modules"
+          key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+
+      - name: Install dependencies if cache is not found
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn --frozen-lockfile
 
       - name: Generate configuration file
         env:
