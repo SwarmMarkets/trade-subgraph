@@ -13,6 +13,7 @@ jobs:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
   deploy-beta-rinkeby:
+    needs: deploy-beta-mainnet
     uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.rinkeby.yml@develop
     with:
       SUBGRAPH_NAME: trade-rinkeby-beta
@@ -20,6 +21,7 @@ jobs:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
   deploy-beta-polygon:
+    needs: deploy-beta-rinkeby
     uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.polygon.yml@develop
     with:
       SUBGRAPH_NAME: trade-polygon-beta
@@ -27,6 +29,7 @@ jobs:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
   deploy-beta-mumbai:
+    needs: deploy-beta-polygon
     uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.mumbai.yml@develop
     with:
       SUBGRAPH_NAME: trade-mumbai-beta

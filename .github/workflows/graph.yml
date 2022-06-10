@@ -13,18 +13,21 @@ jobs:
 
   deploy-stable-rinkeby:
     name: Ethereum Rinkeby
+    needs: deploy-stable-mainnet
     uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.rinkeby.yml@main
     secrets:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
   deploy-stable-polygon:
     name: Polygon Matic
+    needs: deploy-stable-rinkeby
     uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.polygon.yml@main
     secrets:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
 
   deploy-stable-mumbai:
     name: Polygon Mumbai
+    needs: deploy-stable-polygon
     uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.mumbai.yml@main
     secrets:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
