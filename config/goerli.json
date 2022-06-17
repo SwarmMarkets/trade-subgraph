@@ -1,0 +1,22 @@
+{
+  "network": "goerli",
+  "schemaFileName": "schema.graphql",
+  "dataSources": {
+    "factory": {
+      "address": "",
+      "startBlock": 0
+    },
+    "xTokenWrapper": {
+      "address": "",
+      "startBlock": 0
+    },
+    "dOTCManager": {
+      "address": "",
+      "startBlock": 0
+    },
+    "dOTCListedTokens": {
+      "address": "",
+      "startBlock": 0
+    }
+  }
+}
