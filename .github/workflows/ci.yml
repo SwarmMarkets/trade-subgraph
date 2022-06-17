@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+#        network: [ rinkeby, goerli, mumbai, mainnet, matic ]
         network: [ rinkeby, mumbai, mainnet, matic ]
 
     steps:

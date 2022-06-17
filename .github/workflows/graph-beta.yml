@@ -35,3 +35,11 @@ jobs:
       SUBGRAPH_NAME: trade-mumbai-beta
     secrets:
       THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
+
+#  deploy-beta-goerli:
+#    needs: deploy-beta-polygon
+#    uses: SwarmMarkets/trade-subgraph/.github/workflows/graph.goerli.yml@develop
+#    with:
+#      SUBGRAPH_NAME: trade-goerli-beta
+#    secrets:
+#      THE_GRAPH_ACCESS_TOKEN: ${{ secrets.THE_GRAPH_ACCESS_TOKEN }}
