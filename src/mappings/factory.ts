@@ -1,5 +1,5 @@
 import { Address, BigDecimal, ByteArray } from '@graphprotocol/graph-ts'
-import { SPTs as disabledSPTs } from '../constants/disabled-tokens'
+import { isTokenDisabled } from '../utils/isTokenDisabled'
 import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
 import { LOG_NEW_POOL } from '../types/Factory/Factory'
 import { Balancer, CrpControllerPoolCount, Pool } from '../types/schema'
@@ -36,7 +36,7 @@ export function handleNewPool(event: LOG_NEW_POOL): void {
   let poolId = event.params.pool.toHexString()
 
   // skip misconfigured pools
-  if (disabledSPTs.includes(poolId)) {
+  if (isTokenDisabled(poolId)) {
     return
   }
 

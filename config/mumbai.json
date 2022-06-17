@@ -4,11 +4,19 @@
   "dataSources": {
     "factory": {
       "address": "0xd290e0F094D860B1F5860e9ede89b6FA50C2543F",
-      "startBlock": 19000000
+      "startBlock": 24796924
     },
     "xTokenWrapper": {
       "address": "0x9ED7C0Cd38a4A15A34A4093Fb1038ff867C9476B",
-      "startBlock": 19000000
+      "startBlock": 24796924
+    },
+    "dOTCManager": {
+      "address": "0xBC4ABaEdf4913f492b6936442dd2B366f7cfa033",
+      "startBlock": 25844650
+    },
+    "dOTCListedTokens": {
+      "address": "0x96968b52bEFC44196C331ba7B3f72E5fFD401F2e",
+      "startBlock": 25844650
     }
   }
 }

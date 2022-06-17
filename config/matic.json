@@ -9,6 +9,14 @@
     "xTokenWrapper": {
       "address": "0x6cDDe4eD9165405c1914b229d3cD4Ac9C354C331",
       "startBlock": 23343641
+    },
+    "dOTCManager": {
+      "address": "0x386ad1A9e0d81250DF24068f539971A25FFd7438",
+      "startBlock": 26898430
+    },
+    "dOTCListedTokens": {
+      "address": "0xADeb520f3fBE004893A7A65f80D935f29F138d0B",
+      "startBlock": 26898430
     }
   }
 }

@@ -139,6 +139,8 @@ type Token @entity {
   name: String!
   symbol: String!
   decimals: Int!
+  tvl: BigDecimal! # Total value locked in protocol
+  paused: Boolean! # Temp workaround until graph supports filtering on nested field
 }
 
 type XToken @entity {
@@ -149,4 +151,47 @@ type XToken @entity {
   decimals: Int!
   paused: Boolean!
   poolTokens: [PoolToken!] @derivedFrom(field: "xToken")
+}
+
+type Offer @entity {
+  id: ID!
+  maker: Bytes! # address of maker
+  tokenIn: ERC20Token!
+  tokenOut: ERC20Token!
+  amountIn: BigDecimal!
+  amountOut: BigDecimal!
+  price: BigDecimal!
+  offerType: BigInt!
+  isPrivate: Boolean!
+  specialAddress: Bytes
+  isCompleted: Boolean!
+  orders: [Order!]! @derivedFrom(field: "offers")
+  cancelled: Boolean!
+  availableAmount: BigDecimal!
+  expiresAt: BigInt!
+  createdAt: BigInt!
+}
+
+type Order @entity {
+  id: ID!
+  offers: Offer!
+  amountPaid: BigDecimal!
+  orderedBy: Bytes!
+  amountToReceive: BigDecimal!
+  createdAt: BigInt!
+}
+
+type ERC20Token @entity {
+  id: ID!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  paused: Boolean!
+}
+
+type ERC1155Token @entity {
+  id: ID!
+  name: String!
+  symbol: String!
+  paused: Boolean!
 }

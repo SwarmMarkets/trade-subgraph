@@ -1,9 +1,8 @@
 import { log } from '@graphprotocol/graph-ts'
+import { isTokenDisabled } from '../utils/isTokenDisabled'
+import { isXTokenDisabled } from '../utils/isXTokenDisabled'
+import { ZERO_BD } from '../constants/math'
 import { DEFAULT_DECIMALS } from '../constants/common'
-import {
-  SPTs as disabledSPTs,
-  xSPTs as disabledXSPTSs,
-} from '../constants/disabled-tokens'
 import { Token, XToken } from '../types/schema'
 import { XToken as XTokenAbi } from '../types/templates'
 import { ERC20 } from '../types/XTokenWrapper/ERC20'
@@ -19,8 +18,8 @@ export function handleRegisterToken(event: RegisterToken): void {
     xTokenId,
   ])
 
-  // skip misconfigured pools
-  if (disabledSPTs.includes(tokenId) || disabledXSPTSs.includes(xTokenId)) {
+  // skip misconfigured pools and tokens
+  if (isTokenDisabled(tokenId) || isXTokenDisabled(xTokenId)) {
     return
   }
 
@@ -38,21 +37,23 @@ export function handleRegisterToken(event: RegisterToken): void {
       : DEFAULT_DECIMALS
     token.name = !tokenName.reverted ? tokenName.value : ''
     token.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ''
+    token.tvl = ZERO_BD
+    token.paused = false
   }
 
   if (xToken == null) {
     xToken = new XToken(xTokenId)
+    let erc20Token = ERC20.bind(xTokenIdAddress)
+    let tokenDecimals = erc20Token.try_decimals()
+    let tokenName = erc20Token.try_name()
+    let tokenSymbol = erc20Token.try_symbol()
+    xToken.decimals = !tokenDecimals.reverted
+      ? tokenDecimals.value
+      : DEFAULT_DECIMALS
+    xToken.name = !tokenName.reverted ? tokenName.value : ''
+    xToken.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ''
+    xToken.paused = false
   }
-  let erc20Token = ERC20.bind(xTokenIdAddress)
-  let tokenDecimals = erc20Token.try_decimals()
-  let tokenName = erc20Token.try_name()
-  let tokenSymbol = erc20Token.try_symbol()
-  xToken.decimals = !tokenDecimals.reverted
-    ? tokenDecimals.value
-    : DEFAULT_DECIMALS
-  xToken.name = !tokenName.reverted ? tokenName.value : ''
-  xToken.symbol = !tokenSymbol.reverted ? tokenSymbol.value : ''
-  xToken.paused = false
 
   xToken.token = tokenId
   token.xToken = xTokenId
