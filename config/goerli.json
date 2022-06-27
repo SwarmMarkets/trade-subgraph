@@ -3,20 +3,20 @@
   "schemaFileName": "schema.graphql",
   "dataSources": {
     "factory": {
-      "address": "",
-      "startBlock": 0
+      "address": "0x6BDcE752EcDBE23F3666047451817c952256Bd99",
+      "startBlock": 7104208
     },
     "xTokenWrapper": {
-      "address": "",
-      "startBlock": 0
+      "address": "0x6124244f5F614C791ccD202E653112Ec4e2064de",
+      "startBlock": 7104626
     },
     "dOTCManager": {
-      "address": "",
-      "startBlock": 0
+      "address": "0x88EEfd075Da6f7185c39713296183Cd052eEfd0D",
+      "startBlock": 7114899
     },
     "dOTCListedTokens": {
-      "address": "",
-      "startBlock": 0
+      "address": "0x51A9fbD6A2B645133084eD1419421C0758AAF2E1",
+      "startBlock": 7114898
     }
   }
 }
