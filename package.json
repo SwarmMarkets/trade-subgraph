@@ -16,7 +16,7 @@
     "@graphprotocol/graph-cli": "^0.21.2",
     "@graphprotocol/graph-ts": "^0.20.1",
     "@typescript-eslint/eslint-plugin": "^5.30.4",
-    "@typescript-eslint/parser": "^5.29.0",
+    "@typescript-eslint/parser": "^5.30.4",
     "assemblyscript": "^0.20.13",
     "env-cmd": "^10.1.0",
     "eslint": "8.19.0",
