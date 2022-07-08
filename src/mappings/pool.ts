@@ -32,6 +32,7 @@ import {
   updatePoolLiquidity,
 } from './helpers'
 import { BI_1, ZERO_BD } from '../constants/math'
+import { SwapOperation } from '../wrappers/swapOperation'
 
 /************************************
  ********** Pool Controls ***********
@@ -273,6 +274,18 @@ export function handleExitPool(event: LOG_EXIT): void {
  ************** SWAPS ***************
  ************************************/
 
+export function handleSwapOperation(event: LOG_SWAP, partialSwap: Swap): void {
+  let swapOperationId = event.transaction.hash.toHexString()
+
+  let swapOperation = SwapOperation.loadOrCreate(swapOperationId)
+
+  swapOperation.addPartialSwap(partialSwap)
+
+  swapOperation.save()
+
+  partialSwap.swapOperation = swapOperationId
+}
+
 export function handleSwap(event: LOG_SWAP): void {
   let poolId = event.address.toHex()
 
@@ -362,6 +375,9 @@ export function handleSwap(event: LOG_SWAP): void {
   swap.value = swapValue
   swap.feeValue = swapFeeValue
   swap.timestamp = event.block.timestamp.toI32()
+
+  handleSwapOperation(event, swap as Swap)
+
   swap.save()
 
   saveTransaction(event, 'swap')
