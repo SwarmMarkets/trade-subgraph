@@ -27,12 +27,12 @@ import {
   decrPoolCount,
   getCrpUnderlyingPool,
   hexToDecimal,
-  saveTransaction,
   tokenToDecimal,
   updatePoolLiquidity,
 } from './helpers'
 import { BI_1, ZERO_BD } from '../constants/math'
 import { SwapOperation } from '../wrappers/swapOperation'
+import { Transaction } from '../wrappers/transaction'
 
 /************************************
  ********** Pool Controls ***********
@@ -46,8 +46,6 @@ export function handleSetSwapFee(event: LOG_CALL): void {
     DEFAULT_DECIMALS,
   )
   pool.save()
-
-  saveTransaction(event, 'setSwapFee')
 }
 
 export function handleSetController(event: LOG_CALL): void {
@@ -59,8 +57,6 @@ export function handleSetController(event: LOG_CALL): void {
   )
   pool.controller = controller
   pool.save()
-
-  saveTransaction(event, 'setController')
 }
 
 export function handleSetCrpController(event: OwnershipTransferred): void {
@@ -77,7 +73,6 @@ export function handleSetCrpController(event: OwnershipTransferred): void {
 
   // We overwrite event address so that ownership transfers can be linked to Pool entities for above reason.
   event.address = Address.fromString(pool.id)
-  saveTransaction(event, 'setCrpController')
 }
 
 export function handleSetPublicSwap(event: LOG_CALL): void {
@@ -85,8 +80,6 @@ export function handleSetPublicSwap(event: LOG_CALL): void {
   let pool = Pool.safeLoad(poolId)
   pool.publicSwap = event.params.data.toHexString().slice(-1) == '1'
   pool.save()
-
-  saveTransaction(event, 'setPublicSwap')
 }
 
 export function handleFinalize(event: LOG_CALL): void {
@@ -114,8 +107,6 @@ export function handleFinalize(event: LOG_CALL): void {
   factory.finalizedPoolCount = factory.finalizedPoolCount + 1
   if (pool.crp) factory.privateCount = factory.privateCount + 1
   factory.save()
-
-  saveTransaction(event, 'finalize')
 }
 
 export function handleRebind(event: LOG_CALL): void {
@@ -169,7 +160,6 @@ export function handleRebind(event: LOG_CALL): void {
   pool.save()
 
   updatePoolLiquidity(poolId)
-  saveTransaction(event, 'rebind')
 }
 
 export function handleUnbind(event: LOG_CALL): void {
@@ -192,7 +182,6 @@ export function handleUnbind(event: LOG_CALL): void {
   store.remove('PoolToken', poolTokenId)
 
   updatePoolLiquidity(poolId)
-  saveTransaction(event, 'unbind')
 }
 
 export function handleGulp(call: GulpCall): void {
@@ -241,7 +230,7 @@ export function handleJoinPool(event: LOG_JOIN): void {
   poolToken.save()
 
   updatePoolLiquidity(poolId)
-  saveTransaction(event, 'join')
+  Transaction.loadOrCreateJoin(event)
 }
 
 export function handleExitPool(event: LOG_EXIT): void {
@@ -267,24 +256,12 @@ export function handleExitPool(event: LOG_EXIT): void {
   pool.save()
 
   updatePoolLiquidity(poolId)
-  saveTransaction(event, 'exit')
+  Transaction.loadOrCreateExit(event)
 }
 
 /************************************
  ************** SWAPS ***************
  ************************************/
-
-export function handleSwapOperation(event: LOG_SWAP, partialSwap: Swap): void {
-  let swapOperationId = event.transaction.hash.toHexString()
-
-  let swapOperation = SwapOperation.loadOrCreate(swapOperationId)
-
-  swapOperation.addPartialSwap(partialSwap)
-
-  swapOperation.save()
-
-  partialSwap.swapOperation = swapOperationId
-}
 
 export function handleSwap(event: LOG_SWAP): void {
   let poolId = event.address.toHex()
@@ -376,9 +353,17 @@ export function handleSwap(event: LOG_SWAP): void {
   swap.feeValue = swapFeeValue
   swap.timestamp = event.block.timestamp.toI32()
 
-  handleSwapOperation(event, swap as Swap)
+  let swapOperationId = event.transaction.hash.toHex()
+
+  let swapOperation = SwapOperation.loadOrFill(swapOperationId)
+
+  swapOperation.addPartialSwap(swap as Swap)
+
+  swapOperation.save()
+
+  swap.swapOperation = swapOperationId
 
   swap.save()
 
-  saveTransaction(event, 'swap')
+  Transaction.loadOrCreateSwap(event, swapOperation)
 }

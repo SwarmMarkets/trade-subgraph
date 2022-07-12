@@ -1,15 +1,9 @@
-import {
-  Address,
-  BigDecimal,
-  BigInt,
-  Bytes,
-  ethereum,
-} from '@graphprotocol/graph-ts'
+import { Address, BigDecimal, BigInt, Bytes } from '@graphprotocol/graph-ts'
 import { CRP_FACTORY } from '../constants/crp-factory'
 import { DEFAULT_DECIMALS } from '../constants/common'
 import { ConfigurableRightsPool } from '../types/Factory/ConfigurableRightsPool'
 import { CRPFactory } from '../types/Factory/CRPFactory'
-import { PoolShare, Transaction, User } from '../types/schema'
+import { PoolShare } from '../types/schema'
 import {
   Balancer,
   Pool,
@@ -23,6 +17,7 @@ import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
 import { GnosisSafe } from '../types/templates/XToken/GnosisSafe'
 import { BD_2, BI_10, BI_2, ZERO_BD } from '../constants/math'
 import { DAI, USDC } from '../constants/stablecoins'
+import { User } from '../wrappers/user'
 
 export function hexToDecimal(hexString: string, decimals: i32): BigDecimal {
   let bytes = Bytes.fromHexString(hexString).reverse() as Bytes
@@ -53,7 +48,8 @@ export function createPoolShareEntity(
   let userAddress = getOwnersCall.reverted
     ? 'CALCULATE_CPK'
     : getOwnersCall.value.pop().toHexString()
-  createUserEntity(user, userAddress)
+
+  User.loadOrCreate(user, userAddress)
 
   poolShare.userAddress = user
   poolShare.poolId = pool
@@ -250,43 +246,6 @@ export function decrPoolCount(
     if (finalized) factory.finalizedPoolCount = factory.finalizedPoolCount - 1
     if (crp) factory.crpCount = factory.crpCount - 1
     factory.save()
-  }
-}
-
-export function saveTransaction(
-  event: ethereum.Event,
-  eventName: string,
-): void {
-  // let blockAuthor = event.block.author.toHex()
-  // let transactionTo = event.transaction.to.toHex()
-  let tx = event.transaction.hash
-    .toHexString()
-    .concat('-')
-    .concat(event.logIndex.toString())
-  let userAddress = event.transaction.from.toHex()
-  let transaction = Transaction.load(tx)
-  if (transaction == null) {
-    transaction = new Transaction(tx)
-  }
-  transaction.event = eventName
-  transaction.poolAddress = event.address.toHex()
-  transaction.userAddress = userAddress
-  transaction.gasUsed = event.transaction.gasUsed.toBigDecimal()
-  transaction.gasPrice = event.transaction.gasPrice.toBigDecimal()
-  transaction.tx = event.transaction.hash
-  transaction.timestamp = event.block.timestamp.toI32()
-  transaction.block = event.block.number.toI32()
-  transaction.save()
-
-  createUserEntity(userAddress, userAddress)
-}
-
-export function createUserEntity(address: string, userAddress: string): void {
-  if (User.load(address) == null) {
-    let user = new User(address)
-    user.userAddress = userAddress
-    user.isCpkId = address != userAddress
-    user.save()
   }
 }
 

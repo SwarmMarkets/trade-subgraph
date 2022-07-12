@@ -1,6 +1,7 @@
 import { Swap, SwapOperation as SchematicSwapOperation } from '../types/schema'
 import { BI_1, ZERO_BD } from './../constants/math'
 import { ZERO_BI } from '../constants/math'
+import { push } from '../utils/array'
 
 export class SwapOperation extends SchematicSwapOperation {
   constructor(id: string) {
@@ -10,9 +11,10 @@ export class SwapOperation extends SchematicSwapOperation {
     this.value = ZERO_BD
     this.feeValue = ZERO_BD
     this.partialSwapIds = []
+    this.tokenAmountIn = ZERO_BD
   }
 
-  static loadOrCreate(id: string): SwapOperation {
+  static loadOrFill(id: string): SwapOperation {
     let swapOperation = SwapOperation.load(id)
 
     if (swapOperation == null) {
@@ -30,6 +32,14 @@ export class SwapOperation extends SchematicSwapOperation {
     this.partialSwapsCount = this.partialSwapsCount.plus(BI_1)
     this.isMultihop = true
     this.tokenAmountOut = swap.tokenAmountOut
+    this.caller = swap.caller
+    this.timestamp = swap.timestamp
+    this.userAddress = swap.userAddress
+
+    if (this.partialSwapIds.length === 0) {
+      this.tokenIn = swap.tokenIn
+      this.tokenInSym = swap.tokenInSym
+    }
 
     if (swap.tokenIn.equals(this.tokenIn)) {
       this.tokenAmountIn = this.tokenAmountIn.plus(swap.tokenAmountIn)
@@ -47,6 +57,6 @@ export class SwapOperation extends SchematicSwapOperation {
       }
     }
 
-    this.partialSwapIds.push(swap.id)
+    this.partialSwapIds = push<string>(this.partialSwapIds, swap.id)
   }
 }
