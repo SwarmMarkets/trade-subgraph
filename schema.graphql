@@ -127,7 +127,7 @@ type Transaction @entity {
   gasUsed: BigDecimal!
   gasPrice: BigDecimal!
   userAddress: User
-  action: SwapType
+  action: TransactionType
   tokensIn: [XToken!]!
   tokensOut: [XToken!]!
   tokenAmountsIn: [BigDecimal!]!
@@ -146,10 +146,12 @@ type TokenPrice @entity {
   poolTokenId: String
 }
 
-enum SwapType {
+enum TransactionType {
   swap
-  join
-  exit
+  joinPool
+  joinPoolSingleIn
+  exitPool
+  exitPoolSingleOut
 }
 
 type Token @entity {

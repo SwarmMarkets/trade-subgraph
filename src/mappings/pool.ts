@@ -225,12 +225,12 @@ export function handleJoinPool(event: LOG_JOIN): void {
     event.params.tokenAmountIn.toBigDecimal(),
     poolToken.decimals,
   )
-  let newAmount = poolToken.balance.plus(tokenAmountIn)
-  poolToken.balance = newAmount
+
+  poolToken.balance = poolToken.balance.plus(tokenAmountIn)
   poolToken.save()
 
   updatePoolLiquidity(poolId)
-  Transaction.loadOrCreateJoin(event)
+  Transaction.loadOrCreateJoinPool(event)
 }
 
 export function handleExitPool(event: LOG_EXIT): void {
@@ -256,7 +256,7 @@ export function handleExitPool(event: LOG_EXIT): void {
   pool.save()
 
   updatePoolLiquidity(poolId)
-  Transaction.loadOrCreateExit(event)
+  Transaction.loadOrCreateExitPool(event)
 }
 
 /************************************

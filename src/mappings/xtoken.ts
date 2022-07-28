@@ -64,7 +64,7 @@ export function handleTransfer(event: Transfer): void {
      * Interpret minting pool tokens when not creating the pool as part of join transaction
      */
     if (pool != null && pool.totalShares.notEqual(ZERO_BD)) {
-      Transaction.loadMint(event, xTokenAddress)
+      Transaction.updateJoinPoolTx(event, xTokenAddress)
     }
     /**
      * Interpret burning pool tokens as part of exit transaction
@@ -73,7 +73,7 @@ export function handleTransfer(event: Transfer): void {
     token.tvl = token.tvl.gt(value) ? token.tvl.minus(value) : ZERO_BD
     token.save()
     if (pool != null) {
-      Transaction.loadBurn(event, xTokenAddress)
+      Transaction.updateExitPoolTx(event, xTokenAddress)
     }
   }
 
