@@ -2,7 +2,6 @@ import { BigDecimal, ethereum } from '@graphprotocol/graph-ts'
 import { DEFAULT_DECIMALS } from '../constants/common'
 import { Swap, Transaction as SchematicTransaction } from '../types/schema'
 import { SwapOperation } from './swapOperation'
-import { User } from './user'
 import { LOG_JOIN, LOG_EXIT, LOG_SWAP } from '../types/templates/Pool/Pool'
 import { tokenToDecimal } from '../mappings/helpers'
 import { ZERO_BD } from '../constants/math'
@@ -48,10 +47,7 @@ export class Transaction extends SchematicTransaction {
     this.gasPrice = event.transaction.gasPrice.toBigDecimal()
     this.timestamp = event.block.timestamp.toI32()
     this.block = event.block.number.toI32()
-
-    let userAddress = event.transaction.from.toHex()
-    User.loadOrCreate(userAddress, userAddress)
-    this.userAddress = userAddress
+    this.userAddress = event.transaction.from.toHex()
   }
 
   static loadOrCreateJoinPool(event: LOG_JOIN): Transaction {
@@ -142,11 +138,11 @@ export class Transaction extends SchematicTransaction {
     transaction.save()
   }
 
-  static loadOrCreateSwap(
-    event: LOG_SWAP,
-    swapOperation: SwapOperation,
-  ): Transaction {
-    let transaction = Transaction.loadOrCreate(event.transaction.hash.toHex())
+  static updateOrCreateSwapTx(event: LOG_SWAP): void {
+    let transactionId = event.transaction.hash.toHex()
+
+    let transaction = Transaction.loadOrCreate(transactionId)
+    let swapOperation = SwapOperation.loadOrCreate(transactionId)
 
     transaction.fillEventData(event)
 
@@ -154,9 +150,10 @@ export class Transaction extends SchematicTransaction {
 
     transaction.tokensIn = [swapOperation.tokenIn.toHex()]
     transaction.tokenAmountsIn = [swapOperation.tokenAmountIn]
+
     transaction.tokensOut = [swapOperation.tokenOut.toHex()]
     transaction.tokenAmountsOut = [swapOperation.tokenAmountOut]
-    transaction.pools = []
+
     transaction.value = swapOperation.value
 
     let swaps = swapOperation.partialSwapIds.map<Swap>(
@@ -172,7 +169,5 @@ export class Transaction extends SchematicTransaction {
     }
 
     transaction.save()
-
-    return transaction
   }
 }

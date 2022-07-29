@@ -21,6 +21,7 @@ import {
   LOG_SWAP,
   Pool as BPool,
 } from '../types/templates/Pool/Pool'
+import { User } from '../wrappers/user'
 import {
   bigIntToDecimal,
   createPoolTokenEntity,
@@ -230,6 +231,8 @@ export function handleJoinPool(event: LOG_JOIN): void {
   poolToken.save()
 
   updatePoolLiquidity(poolId)
+
+  User.loadOrCreate(event.transaction.from.toHex())
   Transaction.loadOrCreateJoinPool(event)
 }
 
@@ -256,6 +259,8 @@ export function handleExitPool(event: LOG_EXIT): void {
   pool.save()
 
   updatePoolLiquidity(poolId)
+
+  User.loadOrCreate(event.transaction.from.toHex())
   Transaction.loadOrCreateExitPool(event)
 }
 
@@ -304,18 +309,16 @@ export function handleSwap(event: LOG_SWAP): void {
   }
 
   let pool = Pool.safeLoad(poolId)
-  let tokenOutPrice = TokenPrice.safeLoad(tokenOut)
-  let tokenOutPriceValue = tokenOutPrice.price
+  let tokenOutPrice = TokenPrice.safeLoad(tokenOut).price
 
-  let totalSwapVolume = pool.totalSwapVolume
-  let totalSwapFee = pool.totalSwapFee
-  let liquidity = pool.liquidity
   let swapValue = ZERO_BD
   let swapFeeValue = ZERO_BD
+  let totalSwapVolume = pool.totalSwapVolume
+  let totalSwapFee = pool.totalSwapFee
   let factory = Balancer.safeLoad('1')
 
-  if (tokenOutPriceValue.gt(ZERO_BD)) {
-    swapValue = tokenOutPriceValue.times(tokenAmountOut)
+  if (tokenOutPrice.gt(ZERO_BD)) {
+    swapValue = tokenOutPrice.times(tokenAmountOut)
     swapFeeValue = swapValue.times(pool.swapFee)
     totalSwapVolume = totalSwapVolume.plus(swapValue)
     totalSwapFee = totalSwapFee.plus(swapFeeValue)
@@ -344,26 +347,23 @@ export function handleSwap(event: LOG_SWAP): void {
   swap.tokenOutSym = Token.safeLoad(tokenOut).symbol
   swap.tokenAmountIn = tokenAmountIn
   swap.tokenAmountOut = tokenAmountOut
-  swap.poolAddress = event.address.toHex()
+  swap.poolAddress = poolId
   swap.userAddress = event.transaction.from.toHex()
   swap.poolTotalSwapVolume = totalSwapVolume
   swap.poolTotalSwapFee = totalSwapFee
-  swap.poolLiquidity = liquidity
+  swap.poolLiquidity = pool.liquidity
   swap.value = swapValue
   swap.feeValue = swapFeeValue
   swap.timestamp = event.block.timestamp.toI32()
 
-  let swapOperationId = event.transaction.hash.toHex()
+  let swapOperation = SwapOperation.loadOrCreate(event.transaction.hash.toHex())
 
-  let swapOperation = SwapOperation.loadOrFill(swapOperationId)
-
-  swapOperation.addPartialSwap(swap as Swap)
-
-  swapOperation.save()
-
-  swap.swapOperation = swapOperationId
-
+  swap.swapOperation = swapOperation.id
   swap.save()
 
-  Transaction.loadOrCreateSwap(event, swapOperation)
+  swapOperation.addPartialSwap(swap as Swap)
+  swapOperation.save()
+
+  User.loadOrCreate(swap.userAddress)
+  Transaction.updateOrCreateSwapTx(event)
 }

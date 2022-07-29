@@ -14,7 +14,6 @@ import {
 } from '../wrappers'
 import { BToken } from '../types/templates/Pool/BToken'
 import { BTokenBytes } from '../types/templates/Pool/BTokenBytes'
-import { GnosisSafe } from '../types/templates/XToken/GnosisSafe'
 import { BD_2, BI_10, BI_2, ZERO_BD } from '../constants/math'
 import { DAI, USDC } from '../constants/stablecoins'
 import { User } from '../wrappers/user'
@@ -43,13 +42,7 @@ export function createPoolShareEntity(
 ): void {
   let poolShare = new PoolShare(id)
 
-  let gnosisSafe = GnosisSafe.bind(Address.fromString(user))
-  let getOwnersCall = gnosisSafe.try_getOwners()
-  let userAddress = getOwnersCall.reverted
-    ? 'CALCULATE_CPK'
-    : getOwnersCall.value.pop().toHexString()
-
-  User.loadOrCreate(user, userAddress)
+  User.loadOrCreate(user)
 
   poolShare.userAddress = user
   poolShare.poolId = pool

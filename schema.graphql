@@ -117,7 +117,6 @@ type SwapOperation @entity {
   partialSwaps: [Swap!]! @derivedFrom(field: "swapOperation")
   partialSwapIds: [String!]!
   partialSwapsCount: BigInt!
-  isMultihop: Boolean!
 }
 
 type Transaction @entity {
