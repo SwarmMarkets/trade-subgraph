@@ -90,7 +90,7 @@ type Swap @entity {
   tokenOutSym: String! #
   tokenAmountIn: BigDecimal!
   tokenAmountOut: BigDecimal! #
-  poolAddress: Pool
+  poolAddress: Pool!
   userAddress: User # User address that initiates the swap
   value: BigDecimal! # Swap value in USD
   feeValue: BigDecimal! # Swap fee value in USD
@@ -98,20 +98,41 @@ type Swap @entity {
   poolTotalSwapFee: BigDecimal! # Total pool swap fee in USD
   poolLiquidity: BigDecimal! # Pool liquidity value in USD
   timestamp: Int!
+  swapOperation: SwapOperation!
+}
+
+type SwapOperation @entity {
+  id: ID! #
+  caller: Bytes! #
+  tokenIn: Bytes! #
+  tokenInSym: String! #
+  tokenOut: Bytes! #
+  tokenOutSym: String! #
+  tokenAmountIn: BigDecimal!
+  tokenAmountOut: BigDecimal! #
+  userAddress: User # User address that initiates the swap
+  value: BigDecimal! # Swap value in USD
+  feeValue: BigDecimal! # Swap fee value in USD
+  timestamp: Int!
+  partialSwaps: [Swap!]! @derivedFrom(field: "swapOperation")
+  partialSwapIds: [String!]!
+  partialSwapsCount: BigInt!
 }
 
 type Transaction @entity {
   id: ID! # Log ID
-  tx: Bytes!
-  event: String
   block: Int!
   timestamp: Int!
   gasUsed: BigDecimal!
   gasPrice: BigDecimal!
-  poolAddress: Pool
   userAddress: User
-  action: SwapType
-  sender: Bytes
+  action: TransactionType
+  tokensIn: [XToken!]!
+  tokensOut: [XToken!]!
+  tokenAmountsIn: [BigDecimal!]!
+  tokenAmountsOut: [BigDecimal!]!
+  pools: [Pool!]!
+  value: BigDecimal!
 }
 
 type TokenPrice @entity {
@@ -124,13 +145,12 @@ type TokenPrice @entity {
   poolTokenId: String
 }
 
-enum SwapType {
-  swapExactAmountIn
-  swapExactAmountOut
-  joinswapExternAmountIn
-  joinswapPoolAmountOut
-  exitswapPoolAmountIn
-  exitswapExternAmountOut
+enum TransactionType {
+  swap
+  joinPool
+  joinPoolSingleIn
+  exitPool
+  exitPoolSingleOut
 }
 
 type Token @entity {

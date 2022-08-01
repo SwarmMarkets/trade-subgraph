@@ -10,6 +10,7 @@ import {
 } from '../types/templates/XToken/XToken'
 import { createPoolShareEntity, tokenToDecimal } from './helpers'
 import { ZERO_BD } from '../constants/math'
+import { Transaction } from '../wrappers/transaction'
 
 export function handlePaused(event: Paused): void {
   changeXTokenState(event.address, true)
@@ -58,9 +59,22 @@ export function handleTransfer(event: Transfer): void {
   if (isMint) {
     token.tvl = token.tvl.plus(value)
     token.save()
+
+    /**
+     * Interpret minting pool tokens when not creating the pool as part of join transaction
+     */
+    if (pool != null && pool.totalShares.notEqual(ZERO_BD)) {
+      Transaction.updateJoinPoolTx(event, xTokenAddress)
+    }
+    /**
+     * Interpret burning pool tokens as part of exit transaction
+     */
   } else if (isBurn) {
     token.tvl = token.tvl.gt(value) ? token.tvl.minus(value) : ZERO_BD
     token.save()
+    if (pool != null) {
+      Transaction.updateExitPoolTx(event, xTokenAddress)
+    }
   }
 
   if (pool == null) {
