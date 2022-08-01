@@ -394,10 +394,10 @@ asn1@~0.2.3:
   dependencies:
     safer-buffer "~2.1.0"
 
-assemblyscript@^0.20.13:
-  version "0.20.13"
-  resolved "https://registry.yarnpkg.com/assemblyscript/-/assemblyscript-0.20.13.tgz#28da2a392172953610b0407c02ee0248b7c723e8"
-  integrity sha512-F4ACXdBdXCBnPEzRCl/ovFFPGmKXQPvWW4cM6U21eRezaCoREqxA0hjSUOYTz7txY3MJclyBfjwMSEJ5e9HKsw==
+assemblyscript@^0.20.16:
+  version "0.20.16"
+  resolved "https://registry.yarnpkg.com/assemblyscript/-/assemblyscript-0.20.16.tgz#a0c51d8ef8263bb2508f55052baef44cadf98091"
+  integrity sha512-scwMytSJI/5DFVD2dZBvgCNF0SJ77ZtxM7wUqyyrcKB/C1wuaWgFiEU532LHBDY7+APUVMkGEfpn1+Vb97Xpdg==
   dependencies:
     binaryen "108.0.0-nightly.20220528"
     long "^5.2.0"
